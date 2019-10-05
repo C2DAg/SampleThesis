@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#EE5727</color>
+    <color name="colorPrimaryDark">#CE3807</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorWhite">#FCFCFC</color>
+    <color name="colorGray">#7F7F80</color>
+    <color name="violetBlue">#5402E7</color>
+    <color name="violetPink">#B602F3</color>
+    <color name="violet">#986AFF</color>
+    <color name="textcolorHeader">#BF360C</color>
+    <color name="textColorPrimary">#000000</color>
+    <color name="textColorSecondary">#A5A5A5</color>
+    <color name="brightOrange">#FF990A</color>
+    <color name="somethingGreen">#82AF00</color>
+
+    <!--switch color-->
+
+    <color name="thumb_active">#069ECF</color>
+    <color name="track_active">#66069ECF</color>
+
+    <color name="thumb_inactive">#A5A5A5</color>
+    <color name="track_inactive">#66A5A5A5</color>
+</resources>

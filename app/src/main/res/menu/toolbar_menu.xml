@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/dateToolbar"
+        android:orderInCategory="100"
+        android:title="00-00-0000"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/addItem"
+        android:orderInCategory="100"
+        android:title="Add Item"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/editItem"
+        android:orderInCategory="100"
+        android:title="Edit Item"
+        app:showAsAction="never" />
+</menu>

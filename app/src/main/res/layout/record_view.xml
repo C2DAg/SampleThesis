@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mobile.sarproj.com.layout.SwipeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipe_layout"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    app:draggedItem="@id/dragged_layout"
+    android:layout_gravity="center_vertical"
+    app:rightItem="@id/right_view"
+    app:leftItem="@id/left_view"
+    app:swipeDirection="left|right"
+    android:layout_marginBottom="10dp">
+
+  <ImageView
+        android:id="@+id/right_view"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="#ff5722"
+        android:gravity="center"
+        android:src="@drawable/ic_delete_icon"/>
+    <ImageView
+        android:id="@+id/left_view"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#C8E7F7"
+        android:gravity="center"
+        android:src="@drawable/ic_edit_icon"/>
+
+
+
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dragged_layout"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/border"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/dateTV"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:textSize="13sp"
+        android:padding="5dp"
+        android:textAlignment="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/itemTV"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center"
+         />
+
+    <TextView
+        android:id="@+id/itemTV"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:text="ItemName"
+        android:textAlignment="center"
+        android:textSize="13sp"
+        android:padding="5dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/dateTV"
+        app:layout_constraintEnd_toStartOf="@id/catTV"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        />
+
+    <TextView
+        android:id="@+id/catTV"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="Category"
+        android:textAlignment="center"
+        android:padding="3dp"
+        android:textSize="13sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/itemTV"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/valueTV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Value"
+        android:padding="5dp"
+        android:textAlignment="center"
+        android:textSize="13sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/catTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+</android.support.constraint.ConstraintLayout>
+</mobile.sarproj.com.layout.SwipeLayout>
+

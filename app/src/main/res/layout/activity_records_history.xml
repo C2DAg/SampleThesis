@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        >
+    <Button
+        android:id="@+id/dateTVw"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:textStyle="bold"
+        android:textSize="13sp"
+        android:padding="5dp"
+        android:textColor="@color/colorPrimary"
+        android:textAlignment="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/itemTV"
+        />
+
+    <TextView
+        android:id="@+id/itemTVw"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:text="ItemName"
+        android:textAlignment="center"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:padding="5dp"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/dateTVw"
+        app:layout_constraintEnd_toStartOf="@id/catTVw"
+        />
+
+    <TextView
+        android:id="@+id/catTVw"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="Category"
+        android:textAlignment="center"
+        android:padding="3dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/itemTV"
+        />
+
+        <TextView
+            android:id="@+id/valueTVw"
+            android:layout_width="141dp"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:textColor="@color/colorPrimary"
+            android:text="Value"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/catTVw"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
+
+
+    <include
+        android:id="@+id/recordHisContent"
+        layout="@layout/content_records_history"
+        android:layout_width="match_parent"
+        android:layout_height="749dp"
+        android:layout_marginTop="10dp"
+        android:visibility="visible" />
+
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/menu"
+        android:layout_gravity="right|bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        app:menu_colorNormal="@color/colorPrimary"
+        app:menu_colorPressed="@color/colorPrimaryDark"
+
+        >
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/saving"
+            app:fab_label="Saving"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_size="mini"
+            app:fab_colorNormal="@color/colorPrimaryDark"
+            app:fab_colorPressed="@color/colorPrimary"/>
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/income"
+            app:fab_label="Income"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_size="mini"
+            app:fab_colorNormal="@color/colorPrimaryDark"
+            app:fab_colorPressed="@color/colorPrimary"/>
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/expense"
+            app:fab_label="Expense"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_size="mini"
+            app:fab_colorNormal="@color/colorPrimaryDark"
+            app:fab_colorPressed="@color/colorPrimary"/>
+    </com.github.clans.fab.FloatingActionMenu>
+</android.support.design.widget.CoordinatorLayout>

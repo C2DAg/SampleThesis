@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:orientation="vertical"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/bright_orange_border"
+        >
+        <TextView
+            android:id="@+id/dailogTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your memo"
+            android:textSize="20sp"
+            android:padding="2dp"
+            android:textColor="@color/colorPrimary"
+            />
+        <EditText
+            android:id="@+id/dialogET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Add your memo here"
+            ><requestFocus /></EditText>
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
+
+</android.support.constraint.ConstraintLayout>
