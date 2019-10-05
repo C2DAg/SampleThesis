@@ -2,6 +2,7 @@ package com.example.android.samplethesis.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -17,7 +18,16 @@ public class Item implements Serializable {
     private String defaultType;
     private int icon;
 
+    @Ignore
     public Item(String name, String category, String defaultType, int icon) {
+        this.name = name;
+        this.category = category;
+        this.defaultType = defaultType;
+        this.icon = icon;
+    }
+
+    public Item(Long id, String name, String category, String defaultType, int icon) {
+        this.id = id;
         this.name = name;
         this.category = category;
         this.defaultType = defaultType;

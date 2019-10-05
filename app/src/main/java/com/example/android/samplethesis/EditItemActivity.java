@@ -1,6 +1,7 @@
 package com.example.android.samplethesis;
 
 import android.arch.persistence.room.Room;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -34,6 +35,11 @@ public class EditItemActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     List<Item> itemList;
     InputExpenseAdapter inputExpenseAdapter;
+    Long itemId;
+    String name;
+    TextView catEdit;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,13 +51,14 @@ public class EditItemActivity extends AppCompatActivity {
         recyclerView=findViewById(R.id.editRecycler);
         iconEdit=findViewById(R.id.iconEdit);
         itemName=findViewById(R.id.nameEdit);
+        catEdit=findViewById(R.id.catEdit);
         defaultFinanceType=findViewById(R.id.radioDefaultGp);
         cancelBtn=findViewById(R.id.cancelEditBtn);
         saveBtn=findViewById(R.id.saveEditBtn);
         type=getIntent().getStringExtra("type");
         tv=findViewById(R.id.editDefault);
         itemList = database.getItemDAO().getItemByCat(type);
-        RecyclerView recyclerView = findViewById(R.id.inputExpenseRecyclerView);
+        RecyclerView recyclerView = findViewById(R.id.editRecycler);
         inputExpenseAdapter = new InputExpenseAdapter(itemList);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
         recyclerView.setAdapter(inputExpenseAdapter);
@@ -67,6 +74,49 @@ public class EditItemActivity extends AppCompatActivity {
             tv.setVisibility(View.GONE);
             defaultFinanceType.setVisibility(View.GONE);
         }
+
+        inputExpenseAdapter.setClickListener(new InputExpenseAdapter.ClickListener() {
+            @Override
+            public void onClick(Item item) {
+                itemId = item.getId();
+                icons = item.getIcon();
+                name = item.getName();
+                itemName.setText(name);
+                iconEdit.setImageResource(icons);
+                catEdit.setText(type);
+
+            }
+        });
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EditItemActivity.this,InputActivity.class);
+                intent.putExtra("type", type);
+                startActivity(intent);
+            }
+        });
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Item item;
+                item = new Item(itemId,itemName.getText().toString(), type, itemDefaultFinanceType, icons);
+                database.getItemDAO().update(item);
+
+            }
+        });
+
+        defaultFinanceType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId == R.id.neededRBtn){
+                    itemDefaultFinanceType = "needed";
+                }
+                else if(checkedId == R.id.wantedRBtn){
+                    itemDefaultFinanceType = "wanted";
+                }
+            }
+        });
 
     }
 }
