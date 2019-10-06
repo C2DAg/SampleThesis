@@ -47,5 +47,12 @@ public interface DailyRecordDAO {
     @Query("Select sum(DailyRecord.value) From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
             "Where item.category = :category and date Between :date1 and :date2" )
         public int getIESTotal(Date date1, Date date2, String category);
+    @Query("Select sum(DailyRecord.value) From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
+            "Where item.id = :itemId and item.category = :category" )
+    public int getSavingItemTotal(long itemId, String category);
+
+    @Query("Select DailyRecord.value From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
+            "Where item.id = :itemId and financeType = :type" )
+    public int getLastItemWithdraw(long itemId, String type);
 
 }

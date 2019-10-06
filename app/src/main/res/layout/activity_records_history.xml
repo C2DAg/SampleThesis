@@ -94,14 +94,6 @@
 
         >
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/saving"
-            app:fab_label="Saving"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_size="mini"
-            app:fab_colorNormal="@color/colorPrimaryDark"
-            app:fab_colorPressed="@color/colorPrimary"/>
-        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/income"
             app:fab_label="Income"
             android:layout_width="wrap_content"
@@ -117,5 +109,23 @@
             app:fab_size="mini"
             app:fab_colorNormal="@color/colorPrimaryDark"
             app:fab_colorPressed="@color/colorPrimary"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/saving"
+            app:fab_label="Saving"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_size="mini"
+            app:fab_colorNormal="@color/colorPrimaryDark"
+            app:fab_colorPressed="@color/colorPrimary"/>
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/withdraw"
+            app:fab_label="Withdraw Saving"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_size="mini"
+            app:fab_colorNormal="@color/colorPrimaryDark"
+            app:fab_colorPressed="@color/colorPrimary"/>
+
     </com.github.clans.fab.FloatingActionMenu>
 </android.support.design.widget.CoordinatorLayout>

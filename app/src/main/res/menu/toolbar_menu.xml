@@ -4,7 +4,7 @@
     <item
         android:id="@+id/dateToolbar"
         android:orderInCategory="100"
-        android:title="00-00-0000"
+        android:title="Today"
         app:showAsAction="always" />
     <item
         android:id="@+id/addItem"

@@ -28,8 +28,6 @@ import com.example.android.samplethesis.model.Item;
 import java.util.List;
 
 public class EditItemActivity extends AppCompatActivity implements DataAdapter.RecyclerViewItemClickListener {
-        Button clickButton;
-
     public ImageView iconEdit;
     public EditText itemName;
     public Button cancelBtn,saveBtn;
@@ -38,6 +36,7 @@ public class EditItemActivity extends AppCompatActivity implements DataAdapter.R
     public int  icon;
     public int [] icons;
     public String type ;
+    public String catType;
     public TextView tv;
     AppDatabase database;
     RecyclerView recyclerView;
@@ -68,8 +67,12 @@ public class EditItemActivity extends AppCompatActivity implements DataAdapter.R
         needBtn=findViewById(R.id.neededRBtn);
         wantBtn=findViewById(R.id.wantedRBtn);
         type=getIntent().getStringExtra("type");
+        if(type.equalsIgnoreCase("Withdraw")) {
+        catType = "Saving";
+        }else{catType=type;}
         tv=findViewById(R.id.editDefault);
-        itemList = database.getItemDAO().getItemByCat(type);
+
+        itemList = database.getItemDAO().getItemByCat(catType);
         RecyclerView recyclerView = findViewById(R.id.editRecycler);
         inputExpenseAdapter = new InputExpenseAdapter(itemList);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
@@ -83,6 +86,9 @@ public class EditItemActivity extends AppCompatActivity implements DataAdapter.R
             defaultFinanceType.setVisibility(View.VISIBLE);
 
         }else if(type.equalsIgnoreCase("Saving")){
+            tv.setVisibility(View.GONE);
+            defaultFinanceType.setVisibility(View.GONE);
+        }else if(type.equalsIgnoreCase("Withdraw")){
             tv.setVisibility(View.GONE);
             defaultFinanceType.setVisibility(View.GONE);
         }
@@ -134,7 +140,7 @@ public class EditItemActivity extends AppCompatActivity implements DataAdapter.R
                 }else if( type.equalsIgnoreCase("Expense")  && itemDefaultFinanceType.equalsIgnoreCase("")){
                     Toast.makeText(EditItemActivity.this, "Pls Add Default Finance Type for item.(Wanted or Needed)", Toast.LENGTH_SHORT).show();
                 }else {
-                    item = new Item(itemId,itemName.getText().toString(), type, itemDefaultFinanceType, icon);
+                    item = new Item(itemId,itemName.getText().toString(), catType, itemDefaultFinanceType, icon);
                     database.getItemDAO().update(item);
                     iconEdit.setImageResource(R.drawable.ic_add_white);
                     itemName.setText("");
@@ -190,7 +196,7 @@ public class EditItemActivity extends AppCompatActivity implements DataAdapter.R
                     R.drawable.ic_gift,
             };
 
-        }else if(type.equalsIgnoreCase("Saving")) {
+        }else if(type.equalsIgnoreCase("Saving")|| type.equalsIgnoreCase("Withdraw")) {
             icons = new int[]{
                     R.drawable.ic_saving_cash,
                     R.drawable.ic_saving_bank
@@ -210,5 +216,14 @@ public class EditItemActivity extends AppCompatActivity implements DataAdapter.R
                 customDialog.dismiss();
             }
         }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        itemList = database.getItemDAO().getItemByCat(catType);
+        inputExpenseAdapter.setExItem(itemList);
+        inputExpenseAdapter.notifyDataSetChanged();
+    }
 
 }

@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public int imgSrc;
     public int [] icons;
     public String type ;
+    public String catType;
     public TextView tV;
     AppDatabase database;
     @Override
@@ -42,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
         defaultFinanceType = findViewById(R.id.defaultFinaceType);
         tV = findViewById(R.id.textView2);
         type=getIntent().getStringExtra("type");
+        if(type.equalsIgnoreCase("Withdraw")) {
+            catType = "Saving";
+        }else{catType=type;}
         addItemName.setVisibility(View.INVISIBLE);
 
         if(type.equalsIgnoreCase("Income")){
@@ -76,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                     R.drawable.ic_gift,
             };
 
-        }else if(type.equalsIgnoreCase("Saving")){
+        }else if(type.equalsIgnoreCase("Saving") || (type.equalsIgnoreCase("Withdraw"))){
             defaultFinanceType.setVisibility(View.GONE);
             tV.setVisibility(View.GONE);
             icons = new int [] {
@@ -134,12 +138,13 @@ public class MainActivity extends AppCompatActivity {
                 }else if( type.equalsIgnoreCase("Expense")  && itemDefaultFinanceType.equalsIgnoreCase("")){
                     Toast.makeText(MainActivity.this, "Pls Add Default Finance Type for item.(Wanted or Needed)", Toast.LENGTH_SHORT).show();
                 }else {
-                    item = new Item(addItemName.getText().toString(), type, itemDefaultFinanceType, imgSrc);
+                    item = new Item(addItemName.getText().toString(), catType, itemDefaultFinanceType, imgSrc);
                     database.getItemDAO().insert(item);
                     addIconView.setImageResource(R.drawable.ic_add_white);
                     addItemName.setVisibility(View.INVISIBLE);
                     addItemName.setText("");
                     defaultFinanceType.clearCheck();
+                    addItemName.clearFocus();
                     Toast.makeText(MainActivity.this, "Your item is added to the Database", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -153,6 +158,8 @@ public class MainActivity extends AppCompatActivity {
         addItemName.setVisibility(View.INVISIBLE);
         addItemName.setText("");
         defaultFinanceType.clearCheck();
+        addItemName.clearFocus();
+
     }
 
 

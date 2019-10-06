@@ -24,12 +24,17 @@ public class DailyRecord implements Serializable {
     @ColumnInfo(index = true)
     private long itemId;
     private Date date;
-    private double value;
+
+    public long getValue() {
+        return value;
+    }
+
+    private long value;
     private String financeType;
     @Nullable
     private String memo;
     @Ignore
-    public DailyRecord(long recordId, long itemId, Date date, double value, String financeType, String memo) {
+    public DailyRecord(long recordId, long itemId, Date date, long value, String financeType, String memo) {
         this.recordId = recordId;
         this.itemId = itemId;
         this.date = date;
@@ -38,7 +43,7 @@ public class DailyRecord implements Serializable {
         this.memo = memo;
     }
 
-    public DailyRecord(long itemId, Date date, double value, String financeType, String memo) {
+    public DailyRecord(long itemId, Date date, long value, String financeType, String memo) {
         this.itemId = itemId;
         this.date = date;
         this.value = value;
@@ -70,11 +75,8 @@ public class DailyRecord implements Serializable {
         this.date = date;
     }
 
-    public double getValue() {
-        return value;
-    }
 
-    public void setValue(double value) {
+    public void setValue(long value) {
         this.value = value;
     }
 
@@ -95,4 +97,3 @@ public class DailyRecord implements Serializable {
         this.memo = memo;
     }
 }
-

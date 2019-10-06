@@ -107,7 +107,16 @@ public class HomeFragment extends Fragment implements DatePickerDialog.OnDateSet
                 startActivity(intent);
             }
         }));
-
+        root.findViewById(R.id.withdraw).setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                Intent intent = new Intent(getContext() , InputActivity.class);
+                intent.putExtra("type","Withdraw");
+                startActivity(intent);
+            }
+        }));
         dailyRecordWithItemList =dailyRecordDAO.getDRecordWithItem();
         itemList = itemDAO.getAllItem();
         RecyclerView recyclerView = root.findViewById(R.id.recordHistoryRV);
@@ -180,6 +189,5 @@ public class HomeFragment extends Fragment implements DatePickerDialog.OnDateSet
             dailyRecordWithItemList =dailyRecordDAO.getDayRecordWithItem(date);
             recordHistoryAdapter.setRecords(dailyRecordWithItemList);
             recordHistoryAdapter.notifyDataSetChanged();
-
     }
 }
