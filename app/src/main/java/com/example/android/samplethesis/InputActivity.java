@@ -25,7 +25,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.android.samplethesis.ExpenseInput.InputExpenseAdapter;
 import com.example.android.samplethesis.dao.DailyRecordDAO;
 import com.example.android.samplethesis.model.DailyRecord;
@@ -69,7 +68,6 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
     Date date2 = new Date();
     DailyRecordWithItem dailyRecordWithItem = null;
     InputExpenseAdapter inputExpenseAdapter;
-    RecyclerView recyclerView;
     Toolbar toolbar;
     android.text.format.DateFormat dateFormat = new android.text.format.DateFormat();
 

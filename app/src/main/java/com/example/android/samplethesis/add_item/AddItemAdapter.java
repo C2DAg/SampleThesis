@@ -54,19 +54,15 @@ public class AddItemAdapter extends RecyclerView.Adapter<AddItemAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-
         return icons.length;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
+        public ImageView imgView;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.imgView = itemView.findViewById(R.id.icon);
-
         }
-
-        public ImageView imgView;
-
     }
 
     public AddItemAdapter(int[] icons) {
