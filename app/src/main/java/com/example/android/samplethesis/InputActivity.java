@@ -37,6 +37,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
     List<Item> itemList;
     Button[] btn = new Button[16];
     Button memoBtn;
+    Button dateBtn;
     TextView userInput;
     TextView itemNameTV;
     ImageView imgV;
@@ -67,6 +68,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
     Date date = new Date();
     Date date1 = new Date();
     Date date2 = new Date();
+    DatePickerDialog datePickerDialog;
     DailyRecordWithItem dailyRecordWithItem = null;
     InputExpenseAdapter inputExpenseAdapter;
     Toolbar toolbar;
@@ -85,6 +87,8 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         Log.w("dailyrecordwithitem", "rwi" + dailyRecordWithItem);
         Calendar calendar = Calendar.getInstance();
         date = calendar.getTime();
+        dateBtn=findViewById(R.id.dateBtn);
+        dateBtn.setText(dateFormat.format("dd-MM-yyy",date));
         toolbar = (Toolbar) findViewById(R.id.inputToolbar);
         setSupportActionBar(toolbar);
         warninglyt = findViewById(R.id.warningLayout);
@@ -121,6 +125,10 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         inputExpenseAdapter = new InputExpenseAdapter(itemList);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
         recyclerView.setAdapter(inputExpenseAdapter);
+        datePickerDialog = new DatePickerDialog(
+                this, InputActivity.this,
+                calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         if (dailyRecordWithItem == null) {
             // ((TextView) findViewById(R.id.dateToolbar)).setText(dateFormat.format("dd-MM-yyy ", date));
             if (type.equalsIgnoreCase("Income") || type.equalsIgnoreCase("Saving")) {
@@ -159,7 +167,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
             inputExpenseView.setVisibility(View.VISIBLE);
             itemId = dailyRecordWithItem.getItem().getId();
             date = dailyRecordWithItem.getDailyRecord().getDate();
-            ((TextView) findViewById(R.id.dateToolbar)).setText(dateFormat.format("dd-MM-yyy ", date));
+            dateBtn.setText(dateFormat.format("dd-MM-yyy ", date));
             int daysOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
             Log.w("getActualMaximum", "getActualMaximum" + daysOfMonth);
             calendar.set(Calendar.DAY_OF_MONTH, daysOfMonth);
@@ -407,7 +415,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 totalWantedEX = dailyRecordDAO.getNWTotal(date1, date2, "wanted");
                 totalSaving = dailyRecordDAO.getIESTotal(date1, date2,"Saving");
                 totalItemSaving=dailyRecordDAO.getSavingItemTotal(itemId,"Income");
-                ((TextView) findViewById(R.id.dateToolbar)).setText(dateFormat.format("dd-MM-yyy ", date));
+                dateBtn.setText(dateFormat.format("dd-MM-yyy ", date));
                 Log.e("total item saving:", "" + totalItemSaving);
                 Log.w("date1", "" + date1);
                 Log.e("dat2", "" + date2);
@@ -481,6 +489,13 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                     ((TextView) findViewById(R.id.lastPurchaseDText)).setText("" + lastRecordValue);
                 }
         }});
+
+        dateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                datePickerDialog.show();
+            }
+        });
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -713,7 +728,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         date2 = calendar.getTime();
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         date1 = calendar.getTime();
-        ((TextView) findViewById(R.id.dateToolbar)).setText(dateFormat.format("dd-MM-yyy ", date));
+        dateBtn.setText(dateFormat.format("dd-MM-yyy ", date));
         String value = String.valueOf(dailyRecordDAO.getMonthRecord(date1, date2, itemId));
         ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + value);
         Log.w("dates123", "" + date + "_MonthBeginAt" + date1 + "EndIn" + date2);
@@ -731,9 +746,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
 
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
-        if(item.getItemId()== R.id.dateToolbar ){
-
-        }else if(item.getItemId()==R.id.addItem){
+        if(item.getItemId()==R.id.addItem){
             intent = new Intent(InputActivity.this, MainActivity.class);
             intent.putExtra("type", type);
             startActivity(intent);
@@ -755,6 +768,9 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         inputExpenseAdapter.setExItem(itemList);
         inputExpenseAdapter.notifyDataSetChanged();
         inputExpenseView.setVisibility(View.GONE);
+        Calendar calendar = Calendar.getInstance();
+        date=calendar.getTime();
+        dateBtn.setText(dateFormat.format("dd-MM-yyy",date));
     }
 
 }

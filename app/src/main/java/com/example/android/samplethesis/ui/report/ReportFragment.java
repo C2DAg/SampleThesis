@@ -103,8 +103,6 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
         root.findViewById(R.id.expense).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
                 Intent intent = new Intent(getContext(), InputActivity.class);
                 intent.putExtra("type", "Expense");
                 startActivity(intent);
@@ -113,21 +111,25 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
         root.findViewById(R.id.income).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
                 Intent intent = new Intent(getContext(), InputActivity.class);
-
                 intent.putExtra("type", "Income");
+                startActivity(intent);
+            }
+        });
+        root.findViewById(R.id.withdraw).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), InputActivity.class);
+                intent.putExtra("type", "Withdraw");
                 startActivity(intent);
             }
         });
         root.findViewById(R.id.saving).setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
                 Intent intent = new Intent(getContext(), InputActivity.class);
-
                 intent.putExtra("type", "Saving");
                 startActivity(intent);
 

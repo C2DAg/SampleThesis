@@ -263,16 +263,6 @@
         app:menu_colorNormal="@color/colorPrimary"
         app:menu_colorPressed="@color/colorPrimaryDark"
         tools:ignore="MissingConstraints">
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/saving"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/colorPrimaryDark"
-            app:fab_colorPressed="@color/colorPrimary"
-            app:fab_label="Saving"
-            app:fab_size="mini" />
-
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/income"
             android:layout_width="wrap_content"
@@ -281,7 +271,6 @@
             app:fab_colorPressed="@color/colorPrimary"
             app:fab_label="Income"
             app:fab_size="mini" />
-
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/expense"
             android:layout_width="wrap_content"
@@ -290,8 +279,22 @@
             app:fab_colorPressed="@color/colorPrimary"
             app:fab_label="Expense"
             app:fab_size="mini" />
-
-
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/saving"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorNormal="@color/colorPrimaryDark"
+            app:fab_colorPressed="@color/colorPrimary"
+            app:fab_label="Saving"
+            app:fab_size="mini" />
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/withdraw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorNormal="@color/colorPrimaryDark"
+            app:fab_colorPressed="@color/colorPrimary"
+            app:fab_label="Withdraw Saving"
+            app:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
 
 </android.support.constraint.ConstraintLayout>
