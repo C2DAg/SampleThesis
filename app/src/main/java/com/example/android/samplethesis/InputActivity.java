@@ -170,7 +170,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 ((TextView) findViewById(R.id.thisMonthPurchase)).setText("This Month Record:");
                 ((TextView) findViewById(R.id.lastPurchase)).setText("Last record of Item:");
                 findViewById(R.id.financeType).setVisibility(View.GONE);
-                totalSaving = dailyRecordDAO.getIESTotal(date1, date2, "Saving");
+                totalSaving = dailyRecordDAO.getSTotal(date1, date2, "Saving");
 
             } else if (dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
                 Toast.makeText(InputActivity.this, "" + dailyRecordWithItem.getDailyRecord().getFinanceType(), Toast.LENGTH_SHORT).show();
@@ -186,7 +186,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
             }
 
             monthRecord = dailyRecordDAO.getMonthRecord(date1, date2, itemId);
-            totalIncome = dailyRecordDAO.getIESTotal(date1, date2, "Income");
+            totalIncome = dailyRecordDAO.getIETotal(date1, date2, "Income");
             totalWithdraw = dailyRecordDAO.getWithdrawTotal(date1,date2,"Withdraw");
             imgV.setImageResource(dailyRecordWithItem.getItem().getIcon());
             userInput = findViewById(R.id.editNumPad);
@@ -319,8 +319,8 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                 Toast.makeText(InputActivity.this, "Invalid Value!! Pls Try again", Toast.LENGTH_SHORT).show();
                             } else {
                                 if (dailyRecordWithItem != null) { // Edit old record
-                                    int exval = database.getDailyRecordDAO().getIESTotal(date1, date2, "Expense");
-                                    int saval = database.getDailyRecordDAO().getIESTotal(date1, date2, catType);
+                                    int exval = database.getDailyRecordDAO().getIETotal(date1, date2, "Expense");
+                                    int saval = database.getDailyRecordDAO().getSTotal(date1, date2, "Saving");
 
                                     if (catType.equalsIgnoreCase("Saving")&& !dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
                                         Log.w("dailyrecordwithitem", "income" + totalIncome);
@@ -372,9 +372,9 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                         startActivity(intent);
                                     }
                                 } else if (dailyRecordWithItem == null) { // new record input
-                                    int inval = database.getDailyRecordDAO().getIESTotal(date1, date, "Income");
-                                    int exval = database.getDailyRecordDAO().getIESTotal(date1, date, "Expense");
-                                    int saval = database.getDailyRecordDAO().getIESTotal(date1, date, "Saving");
+                                    int inval = database.getDailyRecordDAO().getIETotal(date1, date, "Income");
+                                    int exval = database.getDailyRecordDAO().getIETotal(date1, date, "Expense");
+                                    int saval = database.getDailyRecordDAO().getSTotal(date1, date, "Saving");
                                     int wdval = database.getDailyRecordDAO().getWithdrawTotal(date1,date,"Withdraw");
                                     if (type.equalsIgnoreCase("Saving")) {
                                         if (value > (inval + wdval - (exval + saval))) {
@@ -440,12 +440,12 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
                 date1 = calendar.getTime();
                 monthRecord = dailyRecordDAO.getMonthRecord(date1, date2, itemId);
-                totalIncome = dailyRecordDAO.getIESTotal(date1, date2, "Income");
+                totalIncome = dailyRecordDAO.getIETotal(date1, date2, "Income");
                 totalNeededEx = dailyRecordDAO.getNWTotal(date1, date2, "needed");
                 dayNeededEx = dailyRecordDAO.getDayNWTotal(date,"needed");
                 totalWantedEX = dailyRecordDAO.getNWTotal(date1, date2, "wanted");
                 dayWantedEX = dailyRecordDAO.getDayNWTotal(date,"wanted");
-                totalSaving = dailyRecordDAO.getIESTotal(date1, date2,"Saving");
+                totalSaving = dailyRecordDAO.getSTotal(date1, date2,"Saving");
                 totalItemSaving=dailyRecordDAO.getSavingItemTotal(itemId,"Income");
                 lastItemWithdraw=dailyRecordDAO.getLastItemWithdraw(itemId,"Withdraw");
                 lastRecordValue=dailyRecordDAO.getLastRecord(itemId);

@@ -47,8 +47,7 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        reportViewModel =
-                ViewModelProviders.of(this).get(ReportViewModel.class);
+        reportViewModel =ViewModelProviders.of(this).get(ReportViewModel.class);
         View root = inflater.inflate(R.layout.activity_report, container, false);
         Calendar today = Calendar.getInstance();
         date = today.getTime();
@@ -99,9 +98,9 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
         });
         wantedTotal = dailyRecordDAO.getNWTotal(date1, date2, "wanted");
         neededTotal = dailyRecordDAO.getNWTotal(date1, date2, "needed");
-        incomeTotal = dailyRecordDAO.getIESTotal(date1, date2, "Income");
-        expenseTotal = dailyRecordDAO.getIESTotal(date1, date2, "Expense");
-        savingTotal = dailyRecordDAO.getIESTotal(date1, date2, "Saving");
+        incomeTotal = dailyRecordDAO.getIETotal(date1, date2, "Income");
+        expenseTotal = dailyRecordDAO.getIETotal(date1, date2, "Expense");
+        savingTotal = dailyRecordDAO.getSTotal(date1, date2, "Saving");
         withdrawTotal = dailyRecordDAO.getWithdrawTotal(date1,date2, "Withdraw");
         balance = incomeTotal-(expenseTotal+savingTotal-withdrawTotal);
 
@@ -111,33 +110,33 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
         eTV.setText(String.valueOf(expenseTotal));
         sTV.setText(String.valueOf(savingTotal-withdrawTotal));
         bTV.setText(String.valueOf((incomeTotal - (expenseTotal+savingTotal-withdrawTotal))));
-        wTV.setText(String.valueOf(withdrawTotal));
+        wdTV.setText(String.valueOf(withdrawTotal));
 
         float[] totals = {neededTotal,wantedTotal,savingTotal-withdrawTotal,withdrawTotal,balance};
         String[] names = {"Needed Expense","Wanted Expense","Saving","Withdraw Saving","Balance"};
         int[] colors = {Color.rgb(152,106,255),Color.rgb(182,2,243),Color.rgb(6,158,207),
                 Color.rgb(255,153,10),Color.rgb(84,2,231)};
-        ArrayList NoOfEmp = new ArrayList();
+        ArrayList calculatedValues = new ArrayList();
 
 
-//
-//        NoOfEmp.add(new Entry((float)(neededTotal*100/incomeTotal), 0));
-//        NoOfEmp.add(new Entry((float)(wantedTotal*100/incomeTotal), 1));
-//        NoOfEmp.add(new Entry((float)((savingTotal-withdrawTotal)*100/incomeTotal), 2));
-//        NoOfEmp.add(new Entry((float)(withdrawTotal*100/incomeTotal), 3));
-//        NoOfEmp.add(new Entry((float)(balance*100/incomeTotal), 4));
 
-        PieDataSet dataSet = new PieDataSet(NoOfEmp, "Number Of Employees");
+        calculatedValues.add(new Entry((float)(neededTotal*100/incomeTotal), 0));
+        calculatedValues.add(new Entry((float)(wantedTotal*100/incomeTotal), 1));
+        calculatedValues.add(new Entry((float)((savingTotal-withdrawTotal)*100/incomeTotal), 2));
+        calculatedValues.add(new Entry((float)(withdrawTotal*100/incomeTotal), 3));
+        calculatedValues.add(new Entry((float)(balance*100/incomeTotal), 4));
 
-        ArrayList year = new ArrayList();
+        PieDataSet dataSet = new PieDataSet(calculatedValues, "Expense & Balance percentages based on Income ");
 
-        year.add("Needed Expense");
-        year.add("Wanted Expense");
-        year.add("Saving");
-        year.add("Withdraw Saving");
-        year.add("Balance");
+        ArrayList financeType = new ArrayList();
 
-        PieData data = new PieData(year, dataSet);
+        financeType.add("Needed Expense");
+        financeType.add("Wanted Expense");
+        financeType.add("Saving");
+        financeType.add("Withdraw Saving");
+        financeType.add("Balance");
+
+        PieData data = new PieData(financeType, dataSet);
         pieChart.setData(data);
         dataSet.setColors(colors);
         pieChart.animateXY(3000, 3000);
@@ -198,9 +197,9 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
         DailyRecordDAO dailyrecordDAO = database.getDailyRecordDAO();
         wantedTotal = dailyrecordDAO.getNWTotal(date1, date2, "wanted");
         neededTotal = dailyrecordDAO.getNWTotal(date1, date2, "needed");
-        incomeTotal = dailyrecordDAO.getIESTotal(date1, date2, "Income");
-        expenseTotal = dailyrecordDAO.getIESTotal(date1, date2, "Expense");
-        savingTotal = dailyrecordDAO.getIESTotal(date1, date2, "Saving");
+        incomeTotal = dailyrecordDAO.getIETotal(date1, date2, "Income");
+        expenseTotal = dailyrecordDAO.getIETotal(date1, date2, "Expense");
+        savingTotal = dailyrecordDAO.getSTotal(date1, date2, "Saving");
 
         nTV.setText(String.valueOf(neededTotal));
         wTV.setText(String.valueOf(wantedTotal));
@@ -223,9 +222,9 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
         floatingActionMenu.close(true);
         wantedTotal = dailyrecordDAO.getNWTotal(date1, date2, "wanted");
         neededTotal = dailyrecordDAO.getNWTotal(date1, date2, "needed");
-        incomeTotal = dailyrecordDAO.getIESTotal(date1, date2, "Income");
-        expenseTotal = dailyrecordDAO.getIESTotal(date1, date2, "Expense");
-        savingTotal = dailyrecordDAO.getIESTotal(date1, date2, "Saving");
+        incomeTotal = dailyrecordDAO.getIETotal(date1, date2, "Income");
+        expenseTotal = dailyrecordDAO.getIETotal(date1, date2, "Expense");
+        savingTotal = dailyrecordDAO.getSTotal(date1, date2, "Saving");
         withdrawTotal = dailyrecordDAO.getWithdrawTotal(date1,date2, "Withdraw");
         balance = incomeTotal-(expenseTotal+savingTotal-withdrawTotal);
         nTV.setText(String.valueOf(neededTotal));

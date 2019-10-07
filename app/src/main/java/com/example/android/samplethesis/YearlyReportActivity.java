@@ -72,7 +72,7 @@ public class YearlyReportActivity extends AppCompatActivity {
 //        balance = incomeTotal-(expenseTotal+savingTotal-withdrawTotal);
         ArrayList<BarEntry> totalValues = new ArrayList<BarEntry>();
         for(int i=1; i<=12;i++){
-            incomeTotal = dailyRecordDAO.getIESMonthTotal("Income",year,i);
+            incomeTotal = dailyRecordDAO.getIEMonthTotal("Income",year,i);
             totalValues.add(new BarEntry(incomeTotal, i));
         }
 
@@ -90,7 +90,7 @@ public class YearlyReportActivity extends AppCompatActivity {
                 financeType="needed";
                 for(int i=1; i<=12;i++){
                     neededTotal = dailyRecordDAO.getNWMonthTotal(financeType,year,i);
-                    incomeTotal = dailyRecordDAO.getIESMonthTotal("Income",year,i);
+                    incomeTotal = dailyRecordDAO.getIEMonthTotal("Income",year,i);
                     percentages.add(new BarEntry((int)(neededTotal*100/incomeTotal ), i));
                 }
             }
@@ -102,7 +102,7 @@ public class YearlyReportActivity extends AppCompatActivity {
                 financeType="wanted";
                 for(int i=1; i<=12;i++){
                     neededTotal = dailyRecordDAO.getNWMonthTotal(financeType,year,i);
-                    incomeTotal = dailyRecordDAO.getIESMonthTotal("Income",year,i);
+                    incomeTotal = dailyRecordDAO.getIEMonthTotal("Income",year,i);
                     percentages.add(new BarEntry((int)(neededTotal*100/incomeTotal ), i));
                 }
             }
@@ -112,8 +112,8 @@ public class YearlyReportActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 for(int i=1; i<=12;i++) {
-                    savingTotal = dailyRecordDAO.getIESMonthTotal("Saving", year, i);
-                    incomeTotal = dailyRecordDAO.getIESMonthTotal("Income",year,i);
+                    savingTotal = dailyRecordDAO.getSMonthTotal("Saving", year, i);
+                    incomeTotal = dailyRecordDAO.getIEMonthTotal("Income",year,i);
                     totalValues.add(new BarEntry(savingTotal*100/incomeTotal, i));
                 }
             }
@@ -123,10 +123,10 @@ public class YearlyReportActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 for(int i=1; i<=12;i++) {
-                    savingTotal = dailyRecordDAO.getIESMonthTotal("Saving", year, i);
-                    expenseTotal=dailyRecordDAO.getIESMonthTotal("Expense",year,i);
+                    savingTotal = dailyRecordDAO.getSMonthTotal("Saving", year, i);
+                    expenseTotal=dailyRecordDAO.getIEMonthTotal("Expense",year,i);
                     withdrawTotal=dailyRecordDAO.getWithdrawMonthTotal("Withdraw",year,i);
-                    incomeTotal = dailyRecordDAO.getIESMonthTotal("Income",year,i);
+                    incomeTotal = dailyRecordDAO.getIEMonthTotal("Income",year,i);
                     totalValues.add(new BarEntry((incomeTotal+withdrawTotal-savingTotal-expenseTotal)*100/incomeTotal, i));
                 }
 
@@ -188,8 +188,6 @@ public class YearlyReportActivity extends AppCompatActivity {
             }
         });
         d.show();
-
-
     }
 
 }
