@@ -95,8 +95,6 @@ public class RecordHistoryAdapter extends RecyclerView.Adapter<RecordHistoryAdap
 
             }
         });
-
-
         Log.e("Item",records.get(i).getItem().toString());
         viewHolder.right_view.setOnClickListener((new View.OnClickListener() {
             @Override
@@ -141,7 +139,6 @@ public class RecordHistoryAdapter extends RecyclerView.Adapter<RecordHistoryAdap
             this.memoTV = itemView.findViewById(R.id.memoTV);
             this.right_view = itemView.findViewById(R.id.right_view);
             this.left_view = itemView.findViewById(R.id.left_view);
-
         }
     }
     public interface ClickListener{
