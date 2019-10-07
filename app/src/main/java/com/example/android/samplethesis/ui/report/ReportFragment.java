@@ -139,7 +139,7 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
         PieData data = new PieData(financeType, dataSet);
         pieChart.setData(data);
         dataSet.setColors(colors);
-        pieChart.animateXY(3000, 3000);
+        pieChart.animateXY(1000, 1000);
 
         root.findViewById(R.id.expense).setOnClickListener(new View.OnClickListener() {
             @Override

@@ -110,7 +110,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Monthly Statistics"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/colorPrimaryDark"
             android:textSize="22sp"
             />
     </LinearLayout>
@@ -120,7 +120,7 @@
         android:gravity="right">
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/backBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Back"
             android:background="@color/colorGray"
