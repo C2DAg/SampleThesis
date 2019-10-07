@@ -5,6 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,7 +63,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/itemTV"
         />
-
         <TextView
             android:id="@+id/valueTVw"
             android:layout_width="141dp"
@@ -67,16 +76,33 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/catTVw"
             app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/memoTV"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="Memo"
+            android:textAlignment="center"
+            android:padding="3dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/itemTV"
+            />
+
+
     </LinearLayout>
 
 
-    <include
-        android:id="@+id/recordHisContent"
-        layout="@layout/content_records_history"
-        android:layout_width="match_parent"
-        android:layout_height="749dp"
-        android:layout_marginTop="10dp"
-        android:visibility="visible" />
+            <include
+                android:id="@+id/recordHisContent"
+                layout="@layout/content_records_history"
+                android:layout_width="match_parent"
+                android:layout_height="749dp"
+                android:layout_marginTop="10dp"
+                android:visibility="visible" />
+        </LinearLayout>
+    </HorizontalScrollView>
 
 
     <com.github.clans.fab.FloatingActionMenu

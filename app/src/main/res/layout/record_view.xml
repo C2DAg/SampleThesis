@@ -10,7 +10,9 @@
     app:rightItem="@id/right_view"
     app:leftItem="@id/left_view"
     app:swipeDirection="left|right"
-    android:layout_marginBottom="10dp">
+    android:layout_marginBottom="10dp"
+
+    >
 
   <ImageView
         android:id="@+id/right_view"
@@ -38,8 +40,9 @@
     android:layout_width="match_parent"
     android:layout_height="60dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/border"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:background="#D1C9F7"
+>
 
     <TextView
         android:id="@+id/dateTV"
@@ -95,6 +98,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/catTV"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+    <TextView
+        android:id="@+id/memoTV"
+        android:layout_width="150dp"
+        android:background="#D1C9F7"
+        android:layout_height="wrap_content"
+        android:text="Category"
+        android:textAlignment="center"
+        android:padding="3dp"
+        android:textSize="13sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/valueTV"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 </android.support.constraint.ConstraintLayout>

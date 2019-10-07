@@ -34,25 +34,41 @@ public interface DailyRecordDAO {
             "WHERE DailyRecord.itemId = Item.id and DailyRecord.date = :date Order By Date Desc")
     public List<DailyRecordWithItem> getDayRecordWithItem(Date date);
 
-    @Query("Select value from DailyRecord Where itemId = :itemId ORDER BY date DESC Limit 1" )
+    @Query("Select ifnull(value,0) from DailyRecord Where itemId = :itemId ORDER BY date DESC Limit 1" )
             public int getLastRecord(long itemId);
 
-    @Query("Select sum(value) from DailyRecord Where itemId = :itemId and date Between :date1 and :date2 ")
+    @Query("Select ifnull(sum(value),0) from DailyRecord Where itemId = :itemId and date Between :date1 and :date2 ")
         public int getMonthRecord(Date date1 , Date date2 , long itemId);
 
-    @Query("Select sum(DailyRecord.value) from DailyRecord INNER JOIN Item ON  DailyRecord.itemId = Item.id " +
+    @Query("Select ifnull(sum(DailyRecord.value),0) from DailyRecord INNER JOIN Item ON  DailyRecord.itemId = Item.id " +
             "Where financeType = :type and date Between :date1 and :date2 ")
         public int getNWTotal(Date date1 , Date date2 , String type);
 
-    @Query("Select sum(DailyRecord.value) From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
-            "Where item.category = :category and date Between :date1 and :date2" )
+    @Query("Select ifnull(sum(DailyRecord.value),0) From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
+            "Where item.category = :category and date Between :date1 and :date2 " )
         public int getIESTotal(Date date1, Date date2, String category);
-    @Query("Select sum(DailyRecord.value) From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
-            "Where item.id = :itemId and item.category = :category" )
+
+    @Query("Select ifnull(sum(DailyRecord.value),0) From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
+            "Where item.id = :itemId and item.category = :category and financeType !='Withdraw'" )
     public int getSavingItemTotal(long itemId, String category);
 
-    @Query("Select DailyRecord.value From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
-            "Where item.id = :itemId and financeType = :type" )
+    @Query("Select ifnull(DailyRecord.value,0) From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
+            "Where item.id = :itemId and financeType = :type ORDER BY date DESC Limit 1" )
     public int getLastItemWithdraw(long itemId, String type);
+
+    @Query("Select ifnull(sum(DailyRecord.value),0) From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
+            "Where financeType = :type and date Between :date1 and :date2" )
+    public int getWithdrawTotal(Date date1, Date date2, String type);
+
+    @Query("Select ifnull(sum(DailyRecord.value),0) From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
+            "Where item.category = :category and strftime('%Y', date) = :year and abs(strftime('%m',date))=:i" )
+    public float getIESMonthTotal(String category,int year, int i);
+
+    @Query("Select ifnull(sum(DailyRecord.value),0) from DailyRecord INNER JOIN Item ON  DailyRecord.itemId = Item.id " +
+            "Where financeType = :type and strftime('%Y', date) = :year and abs(strftime('%m',date))=:i")
+    public int getNWMonthTotal(String type,int year, int i);
+    @Query("Select ifnull(sum(DailyRecord.value),0) From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
+            "Where financeType = :type and strftime('%Y', date) = :year and abs(strftime('%m',date))=:i" )
+    public int getWithdrawMonthTotal(String type,int year,int i);
 
 }

@@ -115,7 +115,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         btn[15] = findViewById(R.id.btnSave);
         imgV = findViewById(R.id.addItemIcon);
         itemNameTV = findViewById(R.id.itemName);
-        if(type.equalsIgnoreCase("Withdraw")){
+        if(type=="Withdraw"){
             catType="Saving";
         }else{
             catType = type;
@@ -145,7 +145,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         Toast.makeText(InputActivity.this, "" + type, Toast.LENGTH_SHORT).show();
             }
     }else if (dailyRecordWithItem != null) {
-
+            type= String.valueOf(dailyRecordWithItem.getItem().getCategory());
             memo = String.valueOf(dailyRecordWithItem.getDailyRecord().getMemo());
             if (dailyRecordWithItem.getItem().getCategory().equalsIgnoreCase("Income")||
                     dailyRecordWithItem.getItem().getCategory().equalsIgnoreCase("Saving")) {
@@ -184,7 +184,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
             imgV.setImageResource(dailyRecordWithItem.getItem().getIcon());
             userInput = findViewById(R.id.editNumPad);
             userInput.setText(dailyRecordWithItem.getDailyRecord().getValue() + "");
-            if(type.equalsIgnoreCase("Withdraw")){
+            if(type=="Withdraw"){
                 lastItemWithdraw = dailyRecordDAO.getLastItemWithdraw(itemId,type);
                 ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + totalItemSaving);
                 ((TextView) findViewById(R.id.lastPurchaseDText)).setText("" + lastItemWithdraw);
@@ -313,7 +313,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                         }
                                     }else if (dailyRecordWithItem.getItem().getCategory().equalsIgnoreCase("Saving") &&
                                             dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
-                                        int totalval = database.getDailyRecordDAO().getSavingItemTotal(itemId,"Income");
+                                        int totalval = database.getDailyRecordDAO().getSavingItemTotal(itemId,"Saving");
                                         Log.w("dailyrecordwithitem", "income" + totalval);
                                         if (value > totalval) {
                                             Toast.makeText(InputActivity.this, "Insufficient Saving! Pls try again.", Toast.LENGTH_LONG).show();
@@ -357,7 +357,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                             Toast.makeText(InputActivity.this, "Your Record is saved.", Toast.LENGTH_SHORT).show();
                                         }
                                     }else if (type.equalsIgnoreCase("Withdraw")) {
-                                        int inval = database.getDailyRecordDAO().getSavingItemTotal(itemId, "Income");
+                                        int inval = database.getDailyRecordDAO().getSavingItemTotal(itemId, "Saving");
                                         if (value > inval ) {
                                             Toast.makeText(InputActivity.this, "Insufficient Saving! Pls try again.", Toast.LENGTH_LONG).show();
 
@@ -767,7 +767,6 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         itemList = database.getItemDAO().getItemByCat(catType);
         inputExpenseAdapter.setExItem(itemList);
         inputExpenseAdapter.notifyDataSetChanged();
-        inputExpenseView.setVisibility(View.GONE);
         Calendar calendar = Calendar.getInstance();
         date=calendar.getTime();
         dateBtn.setText(dateFormat.format("dd-MM-yyy",date));

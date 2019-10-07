@@ -24,7 +24,6 @@ public class RecordHistoryAdapter extends RecyclerView.Adapter<RecordHistoryAdap
 
     public RecordHistoryAdapter(List<DailyRecordWithItem> records, ClickListener clickListener) {
         this.records = records;
-
         this.clickListener = clickListener;
     }
 
@@ -46,7 +45,6 @@ public class RecordHistoryAdapter extends RecyclerView.Adapter<RecordHistoryAdap
     public List<DailyRecordWithItem> records;
 
     private ClickListener clickListener;
-
 
     public RecordHistoryAdapter(List<Item> items, DateFormat dateFormat) {
         this.items = items;
@@ -87,6 +85,7 @@ public class RecordHistoryAdapter extends RecyclerView.Adapter<RecordHistoryAdap
         viewHolder.itemTV.setText(String.valueOf(records.get(i).getItem().getName()));
         viewHolder.catTV.setText(records.get(i).getItem().getCategory());
         viewHolder.valueTV.setText(records.get(i).getDailyRecord().getValue()+"");
+        viewHolder.memoTV.setText(records.get(i).getDailyRecord().getMemo()+"");
         viewHolder.left_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,6 +128,7 @@ public class RecordHistoryAdapter extends RecyclerView.Adapter<RecordHistoryAdap
         public TextView itemTV;
         public TextView catTV;
         public TextView valueTV;
+        public TextView memoTV;
         public ImageView right_view;
         public ImageView left_view;
 
@@ -138,6 +138,7 @@ public class RecordHistoryAdapter extends RecyclerView.Adapter<RecordHistoryAdap
             this.itemTV = itemView.findViewById(R.id.itemTV);
             this.catTV = itemView.findViewById(R.id.catTV);
             this.valueTV = itemView.findViewById(R.id.valueTV);
+            this.memoTV = itemView.findViewById(R.id.memoTV);
             this.right_view = itemView.findViewById(R.id.right_view);
             this.left_view = itemView.findViewById(R.id.left_view);
 
