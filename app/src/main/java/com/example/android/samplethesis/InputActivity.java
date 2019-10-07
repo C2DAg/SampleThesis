@@ -123,7 +123,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
 
         if (dailyRecordWithItem == null) {  // For new record input
-            if(type=="Withdraw"){
+            if(type.equalsIgnoreCase("Withdraw")){
                 catType="Saving";
             }else{
                 catType = type;
@@ -162,7 +162,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
             catType = String.valueOf(dailyRecordWithItem.getItem().getCategory());
             if(dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")){
                 type = "Withdraw";
-            }else {type = catType;}
+            }else {type.equalsIgnoreCase(catType);}
             memo = String.valueOf(dailyRecordWithItem.getDailyRecord().getMemo());
 
             if (catType.equalsIgnoreCase("Income") || catType.equalsIgnoreCase("Saving")) {
@@ -331,7 +331,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                         } else {
                                             dailyRecord = dailyRecordWithItem.getDailyRecord();
                                             dailyRecord.setDate(date);
-                                            dailyRecord.setFinanceType("");
+                                            dailyRecord.setFinanceType("Saving");
                                             dailyRecord.setValue(value);
                                             database.getDailyRecordDAO().update(dailyRecord);
                                             userInput.setText("");
@@ -374,12 +374,13 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                 } else if (dailyRecordWithItem == null) { // new record input
                                     int inval = database.getDailyRecordDAO().getIESTotal(date1, date, "Income");
                                     int exval = database.getDailyRecordDAO().getIESTotal(date1, date, "Expense");
-                                    int saval = database.getDailyRecordDAO().getIESTotal(date1, date, type);
+                                    int saval = database.getDailyRecordDAO().getIESTotal(date1, date, "Saving");
                                     int wdval = database.getDailyRecordDAO().getWithdrawTotal(date1,date,"Withdraw");
                                     if (type.equalsIgnoreCase("Saving")) {
                                         if (value > (inval + wdval - (exval + saval))) {
                                             Toast.makeText(InputActivity.this, "Insufficient Balance! Pls try again.", Toast.LENGTH_LONG).show();
                                         } else {
+                                            financeType="Saving";
                                             dailyRecord = new DailyRecord(itemId, date, value, financeType, memo);
                                             database.getDailyRecordDAO().insert(dailyRecord);
                                             userInput.setText("");

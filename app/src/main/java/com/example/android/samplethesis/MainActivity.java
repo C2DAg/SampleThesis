@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
             catType = "Saving";
         }else{catType=type;}
         addItemName.setVisibility(View.INVISIBLE);
-
         if(type.equalsIgnoreCase("Income")){
             defaultFinanceType.setVisibility(View.GONE);
             tV.setVisibility(View.GONE);

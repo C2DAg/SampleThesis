@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,7 @@ public class HomeFragment extends Fragment implements DatePickerDialog.OnDateSet
     FloatingActionMenu floatingActionMenu ;
     Button dateBtn;
     Date date;
+    Date dateE;
     android.text.format.DateFormat dateFormat = new android.text.format.DateFormat();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -167,9 +169,12 @@ public class HomeFragment extends Fragment implements DatePickerDialog.OnDateSet
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, month);
         c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        c.set(Calendar.HOUR_OF_DAY,0);
         date=c.getTime();
+        c.set(Calendar.HOUR_OF_DAY,24);
+        dateE=c.getTime();
         dateBtn.setText(dateFormat.format("dd-MM-yyy",date));
-        dailyRecordWithItemList =dailyRecordDAO.getDayRecordWithItem(date);
+        dailyRecordWithItemList =dailyRecordDAO.getDayRecordWithItem(date,dateE);
         recordHistoryAdapter.setRecords(dailyRecordWithItemList);
         recordHistoryAdapter.notifyDataSetChanged();
     }
