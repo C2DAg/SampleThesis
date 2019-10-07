@@ -174,7 +174,6 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
                 Intent intent = new Intent(getContext(), InputActivity.class);
                 intent.putExtra("type", "Saving");
                 startActivity(intent);
-
             }
         }));
 

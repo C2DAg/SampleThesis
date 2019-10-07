@@ -2,6 +2,7 @@
 <mobile.sarproj.com.layout.SwipeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipe_layout"
     android:layout_width="match_parent"
     android:layout_height="60dp"
@@ -34,85 +35,75 @@
 
 
 <android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dragged_layout"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:gravity="center_vertical"
-    android:background="#D1C9F7"
+    android:gravity="center"
+    android:background="#F5E8DF"
 >
-
-    <TextView
-        android:id="@+id/dateTV"
-        android:layout_width="80dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Date"
-        android:textSize="13sp"
-        android:padding="5dp"
-        android:textAlignment="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/itemTV"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:gravity="center"
-         />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="MissingConstraints" >
 
-    <TextView
-        android:id="@+id/itemTV"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:text="ItemName"
-        android:textAlignment="center"
-        android:textSize="13sp"
-        android:padding="5dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/dateTV"
-        app:layout_constraintEnd_toStartOf="@id/catTV"
-        app:layout_constraintBottom_toBottomOf="parent"
+        <TextView
+            android:id="@+id/dateTV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Date"
+            android:textAlignment="center"
+            android:textColor="@color/violetBlue"
+            android:textSize="13sp"/>
 
-        />
+        <TextView
+            android:id="@+id/itemTV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="ItemName"
+            android:textAlignment="center"
+            android:textColor="@color/violetBlue"
+            android:textSize="13sp"/>
 
-    <TextView
-        android:id="@+id/catTV"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:text="Category"
-        android:textAlignment="center"
-        android:padding="3dp"
-        android:textSize="13sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/itemTV"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+        <TextView
+            android:id="@+id/catTV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Category"
+            android:textAlignment="center"
+            android:textColor="@color/violetBlue"
+            android:textSize="13sp" />
 
-    <TextView
-        android:id="@+id/valueTV"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Value"
-        android:padding="5dp"
-        android:textAlignment="center"
-        android:textSize="13sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/catTV"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
-    <TextView
-        android:id="@+id/memoTV"
-        android:layout_width="150dp"
-        android:background="#D1C9F7"
-        android:layout_height="wrap_content"
-        android:text="Category"
-        android:textAlignment="center"
-        android:padding="3dp"
-        android:textSize="13sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/valueTV"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+        <TextView
+            android:id="@+id/valueTV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Value"
+            android:textAlignment="center"
+            android:textSize="13sp"
+            android:textColor="@color/violetBlue"/>
+
+        <TextView
+            android:id="@+id/memoTV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Memo"
+            android:textAlignment="center"
+            android:textColor="@color/violetBlue"
+            android:textSize="13sp" />
+    </LinearLayout>
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>
 </mobile.sarproj.com.layout.SwipeLayout>
 
