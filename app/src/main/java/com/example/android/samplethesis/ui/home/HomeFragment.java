@@ -63,6 +63,7 @@ public class HomeFragment extends Fragment implements DatePickerDialog.OnDateSet
         dateBtn=root.findViewById(R.id.dateTVw);
         Calendar calendar = Calendar.getInstance();
         date=calendar.getTime();
+        //Date button
         dateBtn.setText(dateFormat.format("dd-MM-yyy",date));
         dateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +75,8 @@ public class HomeFragment extends Fragment implements DatePickerDialog.OnDateSet
                 datePickerDialog.show();
             }
         });
+
+        //Floating menu
         root.findViewById(R.id.expense).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -158,27 +161,25 @@ public class HomeFragment extends Fragment implements DatePickerDialog.OnDateSet
         recyclerView.setAdapter(recordHistoryAdapter);
         return root;
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        dailyRecordWithItemList =dailyRecordDAO.getDRecordWithItem();
-        recordHistoryAdapter.setRecords(dailyRecordWithItemList);
-        recordHistoryAdapter.notifyDataSetChanged();
-        floatingActionMenu.close(true);
-    }
-
-
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-            Calendar c = Calendar.getInstance();
-            c.set(Calendar.YEAR, year);
-            c.set(Calendar.MONTH, month);
-            c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            date=c.getTime();
-            dateBtn.setText(dateFormat.format("dd-MM-yyy",date));
-            dailyRecordWithItemList =dailyRecordDAO.getDayRecordWithItem(date);
-            recordHistoryAdapter.setRecords(dailyRecordWithItemList);
-            recordHistoryAdapter.notifyDataSetChanged();
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        date=c.getTime();
+        dateBtn.setText(dateFormat.format("dd-MM-yyy",date));
+        dailyRecordWithItemList =dailyRecordDAO.getDayRecordWithItem(date);
+        recordHistoryAdapter.setRecords(dailyRecordWithItemList);
+        recordHistoryAdapter.notifyDataSetChanged();
     }
+    @Override
+    public void onResume() {
+       super.onResume();
+       dailyRecordWithItemList = dailyRecordDAO.getDRecordWithItem();
+       recordHistoryAdapter.setRecords(dailyRecordWithItemList);
+       recordHistoryAdapter.notifyDataSetChanged();
+       floatingActionMenu.close(true);
+    }
+
 }

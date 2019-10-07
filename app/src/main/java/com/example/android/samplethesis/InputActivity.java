@@ -5,6 +5,7 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -55,9 +56,9 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
     long lastRecordValue;
     long totalIncome;
     long monthRecord;
-    long totalSaving;
-    long totalNeededEx;
-    long totalWantedEX;
+    long totalSaving,totalWithdraw;
+    long totalNeededEx,dayNeededEx;
+    long totalWantedEX,dayWantedEX;
     long itemId;
     double wantedLevel = 0.3;
     double neededLevel = 0.5;
@@ -73,6 +74,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
     InputExpenseAdapter inputExpenseAdapter;
     Toolbar toolbar;
     android.text.format.DateFormat dateFormat = new android.text.format.DateFormat();
+    int daysOfMonth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,80 +117,86 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         btn[15] = findViewById(R.id.btnSave);
         imgV = findViewById(R.id.addItemIcon);
         itemNameTV = findViewById(R.id.itemName);
-        if(type=="Withdraw"){
-            catType="Saving";
-        }else{
-            catType = type;
-        }
-        itemList = database.getItemDAO().getItemByCat(catType);
-        RecyclerView recyclerView = findViewById(R.id.inputExpenseRecyclerView);
-        inputExpenseAdapter = new InputExpenseAdapter(itemList);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
-        recyclerView.setAdapter(inputExpenseAdapter);
         datePickerDialog = new DatePickerDialog(
                 this, InputActivity.this,
                 calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
-        if (dailyRecordWithItem == null) {
-            // ((TextView) findViewById(R.id.dateToolbar)).setText(dateFormat.format("dd-MM-yyy ", date));
-            if (type.equalsIgnoreCase("Income") || type.equalsIgnoreCase("Saving")) {
-                Toast.makeText(InputActivity.this, "" + type, Toast.LENGTH_SHORT).show();
+
+        if (dailyRecordWithItem == null) {  // For new record input
+            if(type=="Withdraw"){
+                catType="Saving";
+            }else{
+                catType = type;
+            }
+            itemList = database.getItemDAO().getItemByCat(catType);
+            RecyclerView recyclerView = findViewById(R.id.inputExpenseRecyclerView);
+            inputExpenseAdapter = new InputExpenseAdapter(itemList);
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
+            recyclerView.setAdapter(inputExpenseAdapter);
+             if (type.equalsIgnoreCase("Income") || type.equalsIgnoreCase("Saving")) {
                 ((TextView) findViewById(R.id.thisMonthPurchase)).setText("This Month Record:");
                 ((TextView) findViewById(R.id.lastPurchase)).setText("Last record Of Item:" );
                 findViewById(R.id.financeType).setVisibility(View.GONE);
-        } else if (type.equalsIgnoreCase("Withdraw") ) {
-            Toast.makeText(InputActivity.this, "" + type, Toast.LENGTH_SHORT).show();
+                Toast.makeText(InputActivity.this, "" + type, Toast.LENGTH_SHORT).show();
+             } else if (type.equalsIgnoreCase("Withdraw") ) {
             ((TextView) findViewById(R.id.thisMonthPurchase)).setText("Total Saving in Item:");
             ((TextView) findViewById(R.id.lastPurchase)).setText("Last record of Item:" );
             findViewById(R.id.financeType).setVisibility(View.GONE);
+            Toast.makeText(InputActivity.this, "" + type, Toast.LENGTH_SHORT).show();
         }else{
         Toast.makeText(InputActivity.this, "" + type, Toast.LENGTH_SHORT).show();
             }
-    }else if (dailyRecordWithItem != null) {
-            type= String.valueOf(dailyRecordWithItem.getItem().getCategory());
-            memo = String.valueOf(dailyRecordWithItem.getDailyRecord().getMemo());
-            if (dailyRecordWithItem.getItem().getCategory().equalsIgnoreCase("Income")||
-                    dailyRecordWithItem.getItem().getCategory().equalsIgnoreCase("Saving")) {
-                Toast.makeText(InputActivity.this, "" + dailyRecordWithItem.getItem().getCategory(), Toast.LENGTH_SHORT).show();
-                ((TextView) findViewById(R.id.thisMonthPurchase)).setText("This Month Record:" );
-                ((TextView) findViewById(R.id.lastPurchase)).setText("Last record of Item:" );
-                findViewById(R.id.financeType).setVisibility(View.GONE);
-            }else if (dailyRecordWithItem.getItem().getCategory().equalsIgnoreCase("Income")&&
-                    dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
-                Toast.makeText(InputActivity.this, "" + dailyRecordWithItem.getDailyRecord().getFinanceType(), Toast.LENGTH_SHORT).show();
-                ((TextView) findViewById(R.id.thisMonthPurchase)).setText("Total Saving in Item:" );
-                ((TextView) findViewById(R.id.lastPurchase)).setText("Last record of Item:" );
-                findViewById(R.id.financeType).setVisibility(View.GONE);
-            }
-            else {
-                Toast.makeText(InputActivity.this, "" + dailyRecordWithItem.getItem().getCategory(), Toast.LENGTH_SHORT).show();
-            }
+    }else if (dailyRecordWithItem != null) { //For Editing Old record
             findViewById(R.id.inputExpenseRecyclerView).setVisibility(View.GONE);
             inputExpenseView.setVisibility(View.VISIBLE);
             itemId = dailyRecordWithItem.getItem().getId();
             date = dailyRecordWithItem.getDailyRecord().getDate();
             dateBtn.setText(dateFormat.format("dd-MM-yyy ", date));
-            int daysOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+            calendar.setTime(date);
+            daysOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
             Log.w("getActualMaximum", "getActualMaximum" + daysOfMonth);
             calendar.set(Calendar.DAY_OF_MONTH, daysOfMonth);
             date2 = calendar.getTime();
             calendar.set(Calendar.DAY_OF_MONTH, 1);
             date1 = calendar.getTime();
+            catType = String.valueOf(dailyRecordWithItem.getItem().getCategory());
+            if(dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")){
+                type = "Withdraw";
+            }else {type = catType;}
+            memo = String.valueOf(dailyRecordWithItem.getDailyRecord().getMemo());
+
+            if (catType.equalsIgnoreCase("Income") || catType.equalsIgnoreCase("Saving")) {
+                Toast.makeText(InputActivity.this, "" + dailyRecordWithItem.getItem().getCategory(), Toast.LENGTH_SHORT).show();
+                ((TextView) findViewById(R.id.thisMonthPurchase)).setText("This Month Record:");
+                ((TextView) findViewById(R.id.lastPurchase)).setText("Last record of Item:");
+                findViewById(R.id.financeType).setVisibility(View.GONE);
+                totalSaving = dailyRecordDAO.getIESTotal(date1, date2, "Saving");
+
+            } else if (dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
+                Toast.makeText(InputActivity.this, "" + dailyRecordWithItem.getDailyRecord().getFinanceType(), Toast.LENGTH_SHORT).show();
+                ((TextView) findViewById(R.id.thisMonthPurchase)).setText("Total Saving in Item:");
+                ((TextView) findViewById(R.id.lastPurchase)).setText("Last record of Item:");
+                findViewById(R.id.financeType).setVisibility(View.GONE);
+                totalItemSaving = dailyRecordDAO.getSavingItemTotal(itemId, "Saving");
+                Log.w("total item saving", "" + totalItemSaving);
+            } else {
+                totalNeededEx = dailyRecordDAO.getNWTotal(date1, date2, "needed");
+                totalWantedEX = dailyRecordDAO.getNWTotal(date1, date2, "wanted");
+                Toast.makeText(InputActivity.this, "" + catType, Toast.LENGTH_SHORT).show();
+            }
+
             monthRecord = dailyRecordDAO.getMonthRecord(date1, date2, itemId);
             totalIncome = dailyRecordDAO.getIESTotal(date1, date2, "Income");
-            totalSaving = dailyRecordDAO.getIESTotal(date1, date2, "Saving");
-            totalNeededEx = dailyRecordDAO.getNWTotal(date1, date2, "needed");
-            totalWantedEX = dailyRecordDAO.getNWTotal(date1, date2, "wanted");
-            totalItemSaving = dailyRecordDAO.getSavingItemTotal(itemId,"Income");
-            Log.w("totalIncome", "" + totalIncome);
+            totalWithdraw = dailyRecordDAO.getWithdrawTotal(date1,date2,"Withdraw");
             imgV.setImageResource(dailyRecordWithItem.getItem().getIcon());
             userInput = findViewById(R.id.editNumPad);
             userInput.setText(dailyRecordWithItem.getDailyRecord().getValue() + "");
-            if(type=="Withdraw"){
-                lastItemWithdraw = dailyRecordDAO.getLastItemWithdraw(itemId,type);
+
+            if (dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
+                lastItemWithdraw = dailyRecordDAO.getLastItemWithdraw(itemId, "Withdraw");
                 ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + totalItemSaving);
                 ((TextView) findViewById(R.id.lastPurchaseDText)).setText("" + lastItemWithdraw);
-            }else {
+            } else {
                 lastRecordValue = dailyRecordDAO.getLastRecord(itemId);
                 ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + monthRecord);
                 ((TextView) findViewById(R.id.lastPurchaseDText)).setText("" + lastRecordValue);
@@ -201,52 +209,77 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
             Log.e("lastMonthWex", "" + totalWantedEX);
             Log.e("total item saving:", "" + totalItemSaving);
 //Warning linear layout
-            if (dailyRecordWithItem.getItem().getCategory().equalsIgnoreCase("Saving")) {
+            if (catType.equalsIgnoreCase("Saving") && !dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
                 if (totalSaving == (totalIncome * savingLevel)) {
                     warninglyt.setVisibility(View.VISIBLE);
                     ((TextView) findViewById(R.id.warningInputTV)).setText("Your Saving amount is at " + (100 * savingLevel) + "% of Income.");
+                    ((TextView) findViewById(R.id.warningInputTV)).setTextColor(Color.parseColor("#E9EC28"));
                 } else if (totalSaving > (totalIncome * savingLevel)) {
                     warninglyt.setVisibility(View.VISIBLE);
                     ((TextView) findViewById(R.id.warningInputTV)).setText("Your Saving amount exceeds " + (100 * savingLevel) + "% of Income.");
+                    ((TextView) findViewById(R.id.warningInputTV)).setTextColor(Color.parseColor("#FFF19B01"));
+                } else if (totalSaving < (totalIncome * savingLevel)) {
+                    warninglyt.setVisibility(View.VISIBLE);
+                    ((TextView) findViewById(R.id.warningInputTV)).setText("Your Saving amount is less than" + (100 * savingLevel) + "% of Income.");
+                    ((TextView) findViewById(R.id.warningInputTV)).setTextColor(Color.parseColor("#E9EC28"));
                 } else {
                     warninglyt.setVisibility(View.INVISIBLE);
                 }
-            }else if (dailyRecordWithItem.getItem().getCategory().equalsIgnoreCase("Income")) {
-                if (totalIncome == (totalNeededEx+totalWantedEX+totalSaving)) {
+            } else if (catType.equalsIgnoreCase("Income")) {
+                if (totalIncome == (totalNeededEx + totalWantedEX + totalSaving -totalWithdraw)) {
                     warninglyt.setVisibility(View.VISIBLE);
                     ((TextView) findViewById(R.id.warningInputTV)).setText("This month income had been used");
-                } else if (totalIncome < (totalNeededEx+totalWantedEX+totalSaving)) {
+                } else if (totalIncome < (totalNeededEx + totalWantedEX + totalSaving -totalWithdraw)) {
                     warninglyt.setVisibility(View.VISIBLE);
                     ((TextView) findViewById(R.id.warningInputTV)).setText("This month expense had exceeded the total income.");
-                } else if (totalIncome <= (totalNeededEx+totalWantedEX+totalSaving + 30000)) {
+                } else if (totalIncome <= (totalNeededEx + totalWantedEX + totalSaving -totalWithdraw + 30000)) {
                     warninglyt.setVisibility(View.VISIBLE);
                     ((TextView) findViewById(R.id.warningInputTV)).setText("You has low income");
-                }else {
+                } else {
                     warninglyt.setVisibility(View.INVISIBLE);
                 }
             } else if (dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("needed")) {
                 neededBtn.setChecked(true);
+                dayNeededEx=dailyRecordDAO.getDayNWTotal(date,"needed");
                 if (totalNeededEx > (totalIncome * neededLevel)) {
                     warninglyt.setVisibility(View.VISIBLE);
-                    ((TextView) findViewById(R.id.warningInputTV)).setText("Your Needed Expense exceeds " + (neededLevel * 100) + "% of Income!");
+                    ((TextView) findViewById(R.id.warningInputTV)).setText("This Month Total Needed Expense exceeds " + (neededLevel * 100) + "% of Income!");
                 } else if (totalNeededEx == (totalIncome * neededLevel)) {
                     warninglyt.setVisibility(View.VISIBLE);
-                    ((TextView) findViewById(R.id.warningInputTV)).setText("Your Needed Expense is at " + (neededLevel * 100) + "% of Income!");
+                    ((TextView) findViewById(R.id.warningInputTV)).setText("This Month Total Needed Expense is at " + (neededLevel * 100) + "% of Income!");
+                } else if (dayNeededEx > (totalIncome * neededLevel / daysOfMonth)) {
+                    warninglyt.setVisibility(View.VISIBLE);
+                    ((TextView) findViewById(R.id.warningInputTV)).setText("Your Today Needed Expense exceeds " + (neededLevel * 100) + "% of Income!");
+                } else if (dayNeededEx == (totalIncome * neededLevel / daysOfMonth)) {
+                    warninglyt.setVisibility(View.VISIBLE);
+                    ((TextView) findViewById(R.id.warningInputTV)).setText("Your Today Needed Expense is at " + (neededLevel * 100) + "% of Income!");
                 } else {
                     warninglyt.setVisibility(View.INVISIBLE);
                 }
             } else if (dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("wanted")) {
                 wantedBtn.setChecked(true);
+                dayWantedEX=dailyRecordDAO.getDayNWTotal(date,"wanted");
                 if (totalWantedEX >= (totalIncome * wantedLevel)) {
                     findViewById(R.id.warningLayout).setVisibility(View.VISIBLE);
-                    ((TextView) findViewById(R.id.warningInputTV)).setText("Your Wanted Expense exceeds " + (wantedLevel * 100) + "% of Income!");
-
+                    ((TextView) findViewById(R.id.warningInputTV)).setText("This Month Total Wanted Expense exceeds " + (wantedLevel * 100) + "% of Income!");
                 } else if (totalWantedEX == (totalIncome * wantedLevel)) {
                     findViewById(R.id.warningLayout).setVisibility(View.VISIBLE);
-                    ((TextView) findViewById(R.id.warningInputTV)).setText("Your Wanted Expense is at " + (wantedLevel * 100) + "% of Income!");
+                    ((TextView) findViewById(R.id.warningInputTV)).setText("This Month Total Wanted Expense is at " + (wantedLevel * 100) + "% of Income!");
+                } else if (dayWantedEX >= (totalIncome * wantedLevel / daysOfMonth)) {
+                    findViewById(R.id.warningLayout).setVisibility(View.VISIBLE);
+                    ((TextView) findViewById(R.id.warningInputTV)).setText("Your Today Wanted Expense exceeds " + (wantedLevel * 100) + "% of Income!");
+                } else if (dayWantedEX == (totalIncome * wantedLevel / daysOfMonth)) {
+                    findViewById(R.id.warningLayout).setVisibility(View.VISIBLE);
+                    ((TextView) findViewById(R.id.warningInputTV)).setText("Your Today Wanted Expense is at " + (wantedLevel * 100) + "% of Income!");
+                } else {
+                    warninglyt.setVisibility(View.INVISIBLE);
                 }
-            }else{warninglyt.setVisibility(View.INVISIBLE);}
-        }
+            }else if (catType.equalsIgnoreCase("Saving") && dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
+                warninglyt.setVisibility(View.INVISIBLE);
+            }
+        }//End For Editing Old record
+
+        //Number pad
         for (int i = 0; i < 10; i++) {
             final String finalI = Integer.toString(i);
             btn[i].setOnClickListener(new View.OnClickListener() {
@@ -256,10 +289,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                     addToArray(finalI);
                 }
             });
-
-
         }
-
         for (int j = 10; j < 16; j++) {
             btn[j].setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -288,20 +318,20 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                             if (value <= 0) {
                                 Toast.makeText(InputActivity.this, "Invalid Value!! Pls Try again", Toast.LENGTH_SHORT).show();
                             } else {
-                                if (dailyRecordWithItem != null) {
-                                    if (dailyRecordWithItem.getItem().getCategory().equalsIgnoreCase("Saving")) {
-                                        int inval = database.getDailyRecordDAO().getIESTotal(date1, date2, "Income");
-                                        int exval = database.getDailyRecordDAO().getIESTotal(date1, date2, "Expense");
-                                        int saval = database.getDailyRecordDAO().getIESTotal(date1, date2, type);
-                                        Log.w("dailyrecordwithitem", "income" + inval);
+                                if (dailyRecordWithItem != null) { // Edit old record
+                                    int exval = database.getDailyRecordDAO().getIESTotal(date1, date2, "Expense");
+                                    int saval = database.getDailyRecordDAO().getIESTotal(date1, date2, catType);
+
+                                    if (catType.equalsIgnoreCase("Saving")&& !dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
+                                        Log.w("dailyrecordwithitem", "income" + totalIncome);
                                         Log.w("dailyrecordwithitem", "expense" + exval);
                                         Log.w("dailyrecordwithitem", "saving" + saval);
-                                        if (value > (inval - (exval + saval))) {
+                                        if (value > (totalIncome + totalWithdraw - (exval + saval))) {
                                             Toast.makeText(InputActivity.this, "Insufficient Balance! Pls try again.", Toast.LENGTH_LONG).show();
                                         } else {
                                             dailyRecord = dailyRecordWithItem.getDailyRecord();
                                             dailyRecord.setDate(date);
-                                            dailyRecord.setFinanceType(financeType);
+                                            dailyRecord.setFinanceType("");
                                             dailyRecord.setValue(value);
                                             database.getDailyRecordDAO().update(dailyRecord);
                                             userInput.setText("");
@@ -309,9 +339,8 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                             Toast.makeText(InputActivity.this, "Your Record is saved.", Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(InputActivity.this, MenuDrawerActivity.class);
                                             startActivity(intent);
-
                                         }
-                                    }else if (dailyRecordWithItem.getItem().getCategory().equalsIgnoreCase("Saving") &&
+                                    }else if (catType.equalsIgnoreCase("Saving") &&
                                             dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
                                         int totalval = database.getDailyRecordDAO().getSavingItemTotal(itemId,"Saving");
                                         Log.w("dailyrecordwithitem", "income" + totalval);
@@ -342,12 +371,13 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                         Intent intent = new Intent(InputActivity.this, MenuDrawerActivity.class);
                                         startActivity(intent);
                                     }
-                                } else if (dailyRecordWithItem == null) {
+                                } else if (dailyRecordWithItem == null) { // new record input
+                                    int inval = database.getDailyRecordDAO().getIESTotal(date1, date, "Income");
+                                    int exval = database.getDailyRecordDAO().getIESTotal(date1, date, "Expense");
+                                    int saval = database.getDailyRecordDAO().getIESTotal(date1, date, type);
+                                    int wdval = database.getDailyRecordDAO().getWithdrawTotal(date1,date,"Withdraw");
                                     if (type.equalsIgnoreCase("Saving")) {
-                                        int inval = database.getDailyRecordDAO().getIESTotal(date1, date, "Income");
-                                        int exval = database.getDailyRecordDAO().getIESTotal(date1, date, "Expense");
-                                        int saval = database.getDailyRecordDAO().getIESTotal(date1, date, type);
-                                        if (value > (inval - (exval + saval))) {
+                                        if (value > (inval + wdval - (exval + saval))) {
                                             Toast.makeText(InputActivity.this, "Insufficient Balance! Pls try again.", Toast.LENGTH_LONG).show();
                                         } else {
                                             dailyRecord = new DailyRecord(itemId, date, value, financeType, memo);
@@ -357,10 +387,8 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                             Toast.makeText(InputActivity.this, "Your Record is saved.", Toast.LENGTH_SHORT).show();
                                         }
                                     }else if (type.equalsIgnoreCase("Withdraw")) {
-                                        int inval = database.getDailyRecordDAO().getSavingItemTotal(itemId, "Saving");
                                         if (value > inval ) {
                                             Toast.makeText(InputActivity.this, "Insufficient Saving! Pls try again.", Toast.LENGTH_LONG).show();
-
                                         } else {
                                             financeType ="Withdraw";
                                             dailyRecord = new DailyRecord(itemId, date, value, financeType, memo);
@@ -400,21 +428,26 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 itemId = item.getId();
                 memo = "";
                 inputExpenseView.setVisibility(View.VISIBLE);
-                Calendar calendar = Calendar.getInstance();
                 itemNameTV.setText(item.getName() + "");
-                int daysOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+                imgV.setImageResource(item.getIcon());
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                daysOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
                 Log.w("getActualMaximum", "getActualMaximum" + daysOfMonth);
                 calendar.set(Calendar.DAY_OF_MONTH, daysOfMonth);
                 date2 = calendar.getTime();
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
                 date1 = calendar.getTime();
-                int monthRecord = dailyRecordDAO.getMonthRecord(date1, date2, itemId);
-                imgV.setImageResource(item.getIcon());
+                monthRecord = dailyRecordDAO.getMonthRecord(date1, date2, itemId);
                 totalIncome = dailyRecordDAO.getIESTotal(date1, date2, "Income");
                 totalNeededEx = dailyRecordDAO.getNWTotal(date1, date2, "needed");
+                dayNeededEx = dailyRecordDAO.getDayNWTotal(date,"needed");
                 totalWantedEX = dailyRecordDAO.getNWTotal(date1, date2, "wanted");
+                dayWantedEX = dailyRecordDAO.getDayNWTotal(date,"wanted");
                 totalSaving = dailyRecordDAO.getIESTotal(date1, date2,"Saving");
                 totalItemSaving=dailyRecordDAO.getSavingItemTotal(itemId,"Income");
+                lastItemWithdraw=dailyRecordDAO.getLastItemWithdraw(itemId,"Withdraw");
+                lastRecordValue=dailyRecordDAO.getLastRecord(itemId);
                 dateBtn.setText(dateFormat.format("dd-MM-yyy ", date));
                 Log.e("total item saving:", "" + totalItemSaving);
                 Log.w("date1", "" + date1);
@@ -428,20 +461,22 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                     if (totalSaving == (totalIncome * savingLevel)) {
                         warninglyt.setVisibility(View.VISIBLE);
                         ((TextView) findViewById(R.id.warningInputTV)).setText("Your Saving amount is at " + (100 * savingLevel) + "% of Income.");
+                        ((TextView) findViewById(R.id.warningInputTV)).setTextColor(Color.parseColor("#E9EC28"));
                     } else if (totalSaving > (totalIncome * savingLevel)) {
                         warninglyt.setVisibility(View.VISIBLE);
                         ((TextView) findViewById(R.id.warningInputTV)).setText("Your Saving amount exceeds " + (100 * savingLevel) + "% of Income.");
+                        ((TextView) findViewById(R.id.warningInputTV)).setTextColor(Color.parseColor("#E9EC28"));
                     } else {
                         warninglyt.setVisibility(View.INVISIBLE);
                     }
                 } else if (type.equalsIgnoreCase("Income")) {
-                    if (totalIncome ==(totalNeededEx+totalWantedEX+totalSaving)) {
+                    if (totalIncome ==(totalNeededEx+totalWantedEX+totalSaving-totalWithdraw)) {
                         warninglyt.setVisibility(View.VISIBLE);
                         ((TextView) findViewById(R.id.warningInputTV)).setText("This month income had been used");
-                    } else if (totalIncome < (totalNeededEx + totalWantedEX + totalSaving)) {
+                    } else if (totalIncome < (totalNeededEx + totalWantedEX + totalSaving-totalWithdraw)) {
                         warninglyt.setVisibility(View.VISIBLE);
                         ((TextView) findViewById(R.id.warningInputTV)).setText("This month expense had exceeded the total income.");
-                    } else if (totalIncome <= (totalNeededEx + totalWantedEX + totalSaving + 30000)) {
+                    } else if (totalIncome <= (totalNeededEx + totalWantedEX + totalSaving + 30000 -totalWithdraw)) {
                         warninglyt.setVisibility(View.VISIBLE);
                         ((TextView) findViewById(R.id.warningInputTV)).setText("You has low income");
                     } else {
@@ -452,10 +487,16 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                     Log.w("total needed expense", "" + totalNeededEx);
                     if (totalNeededEx > (totalIncome * neededLevel)) {
                         warninglyt.setVisibility(View.VISIBLE);
-                        ((TextView) findViewById(R.id.warningInputTV)).setText("Your Needed Expense exceeds " + (neededLevel * 100) + "% of Income!");
+                        ((TextView) findViewById(R.id.warningInputTV)).setText("This Month Total Needed Expense exceeds " + (neededLevel * 100) + "% of Income!");
                     } else if (monthRecord == (totalIncome * neededLevel)) {
                         warninglyt.setVisibility(View.VISIBLE);
-                        ((TextView) findViewById(R.id.warningInputTV)).setText("Your Needed Expense is at " + (neededLevel * 100) + "% of Income!");
+                        ((TextView) findViewById(R.id.warningInputTV)).setText("This Month Total Needed Expense is at " + (neededLevel * 100) + "% of Income!");
+                    }else if (dayNeededEx > (totalIncome * neededLevel / daysOfMonth)) {
+                        warninglyt.setVisibility(View.VISIBLE);
+                        ((TextView) findViewById(R.id.warningInputTV)).setText("Your Today Needed Expense exceeds " + (neededLevel * 100) + "% of Income!");
+                    } else if (dayNeededEx == (totalIncome * neededLevel / daysOfMonth)) {
+                        warninglyt.setVisibility(View.VISIBLE);
+                        ((TextView) findViewById(R.id.warningInputTV)).setText("Your Today Needed Expense is at " + (neededLevel * 100) + "% of Income!");
                     } else {
                         warninglyt.setVisibility(View.INVISIBLE);
                     }
@@ -467,15 +508,20 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                     Log.w("total wanted expense", "" + totalWantedEX);
                     if (totalWantedEX > (totalIncome * wantedLevel)) {
                         warninglyt.setVisibility(View.VISIBLE);
-                        ((TextView) findViewById(R.id.warningInputTV)).setText("Your Wanted Expense exceeds " + (wantedLevel * 100) + "% of Income!");
+                        ((TextView) findViewById(R.id.warningInputTV)).setText("This Month Total Wanted Expense exceeds " + (wantedLevel * 100) + "% of Income!");
                     } else if (totalWantedEX == (totalIncome * wantedLevel)) {
                         warninglyt.setVisibility(View.VISIBLE);
-                        ((TextView) findViewById(R.id.warningInputTV)).setText("Your Wanted Expense is at " + (wantedLevel * 100) + "% of Income!");
+                        ((TextView) findViewById(R.id.warningInputTV)).setText("This Month Total Wanted Expense is at " + (wantedLevel * 100) + "% of Income!");
+                    }else if (dayWantedEX >= (totalIncome * wantedLevel / daysOfMonth)) {
+                        findViewById(R.id.warningLayout).setVisibility(View.VISIBLE);
+                        ((TextView) findViewById(R.id.warningInputTV)).setText("Your Today Wanted Expense exceeds " + (wantedLevel * 100) + "% of Income!");
+                    } else if (dayWantedEX == (totalIncome * wantedLevel / daysOfMonth)) {
+                        findViewById(R.id.warningLayout).setVisibility(View.VISIBLE);
+                        ((TextView) findViewById(R.id.warningInputTV)).setText("Your Today Wanted Expense is at " + (wantedLevel * 100) + "% of Income!");
                     } else {
                         warninglyt.setVisibility(View.INVISIBLE);
                     }
-                }
-                if(type.equalsIgnoreCase("Withdraw")){
+                }else if(type.equalsIgnoreCase("Withdraw")){
                     lastItemWithdraw = dailyRecordDAO.getLastItemWithdraw(itemId,type);
                     ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + totalItemSaving);
                     Log.w("totalItemSaving", "" + totalItemSaving);
@@ -508,6 +554,12 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                     } else if (totalNeededEx == (totalIncome * neededLevel)) {
                         warninglyt.setVisibility(View.VISIBLE);
                         ((TextView) findViewById(R.id.warningInputTV)).setText("Your Needed Expense is at " + (neededLevel * 100) + "% of Income!");
+                    } else if (dayNeededEx > (totalIncome * neededLevel / daysOfMonth)) {
+                        warninglyt.setVisibility(View.VISIBLE);
+                        ((TextView) findViewById(R.id.warningInputTV)).setText("Your Today Needed Expense exceeds " + (neededLevel * 100) + "% of Income!");
+                    } else if (dayNeededEx == (totalIncome * neededLevel / daysOfMonth)) {
+                        warninglyt.setVisibility(View.VISIBLE);
+                        ((TextView) findViewById(R.id.warningInputTV)).setText("Your Today Needed Expense is at " + (neededLevel * 100) + "% of Income!");
                     } else {
                         warninglyt.setVisibility(View.INVISIBLE);
                     }
@@ -519,6 +571,12 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                     } else if (totalWantedEX == (totalIncome * wantedLevel)) {
                         warninglyt.setVisibility(View.VISIBLE);
                         ((TextView) findViewById(R.id.warningInputTV)).setText("Your Wanted Expense is at " + (wantedLevel * 100) + "% of Income!");
+                    } else if (dayWantedEX >= (totalIncome * wantedLevel / daysOfMonth)) {
+                        findViewById(R.id.warningLayout).setVisibility(View.VISIBLE);
+                        ((TextView) findViewById(R.id.warningInputTV)).setText("Your Today Wanted Expense exceeds " + (wantedLevel * 100) + "% of Income!");
+                    } else if (dayWantedEX == (totalIncome * wantedLevel / daysOfMonth)) {
+                        findViewById(R.id.warningLayout).setVisibility(View.VISIBLE);
+                        ((TextView) findViewById(R.id.warningInputTV)).setText("Your Today Wanted Expense is at " + (wantedLevel * 100) + "% of Income!");
                     } else {
                         warninglyt.setVisibility(View.INVISIBLE);
                     }
