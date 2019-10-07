@@ -43,7 +43,6 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
     FloatingActionMenu floatingActionMenu ;
     TextView nTV, wTV, iTV, eTV, bTV, sTV,wdTV;
     android.text.format.DateFormat dateFormat = new android.text.format.DateFormat();
-d
     MonthPickerDialog monthPickerDialog;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
