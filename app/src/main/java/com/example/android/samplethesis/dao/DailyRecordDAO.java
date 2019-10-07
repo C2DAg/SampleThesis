@@ -70,19 +70,18 @@ public interface DailyRecordDAO {
     public int getWithdrawTotal(Date date1, Date date2, String type);
 
     @Query("Select ifnull(sum(DailyRecord.value),0) From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
-            "Where item.category = :category and strftime('%Y', date) = :year and abs(strftime('%m',date))=:i" )
-    public float getIEMonthTotal(String category,int year, int i);
+            "Where item.category = :category and date >= :startDate and  date <= :endDate" )
+    public float getIEMonthTotal(String category,Date startDate, Date endDate);
 
     @Query("Select ifnull(sum(DailyRecord.value),0) From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
-            "Where item.category = :category and financeType=:category and strftime('%Y', date) = :year and abs(strftime('%m',date))=:i" )
-    public float getSMonthTotal(String category,int year, int i);
+            "Where item.category = :category and financeType=:category and date >= :startDate and  date <= :endDate" )
+    public float getSMonthTotal(String category,Date startDate, Date endDate);
 
     @Query("Select ifnull(sum(DailyRecord.value),0) from DailyRecord INNER JOIN Item ON  DailyRecord.itemId = Item.id " +
-            "Where financeType = :type and strftime('%Y', date) = :year and abs(strftime('%m',date))=:i")
-    public int getNWMonthTotal(String type,int year, int i);
+            "Where financeType = :type and date >= :startDate and  date <= :endDate" )
+    public int getNWMonthTotal(String type,Date startDate, Date endDate);
 
     @Query("Select ifnull(sum(DailyRecord.value),0) From DailyRecord INNER JOIN Item ON DailyRecord.itemId = Item.id " +
-            "Where financeType = :type and strftime('%Y', date) = :year and abs(strftime('%m',date))=:i" )
-    public int getWithdrawMonthTotal(String type,int year,int i);
-
+            "Where financeType = :type and date >= :startDate and  date <= :endDate" )
+    public int getWithdrawMonthTotal(String type,Date startDate, Date endDate);
 }
