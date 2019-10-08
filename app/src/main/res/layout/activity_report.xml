@@ -16,52 +16,63 @@
     >
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:id="@+id/report_date"
+        android:layout_width="match_parent"
+        android:layout_height="63dp"
         android:layout_margin="2dp"
-        android:gravity="left"
         android:background="@drawable/border"
-    >
+        android:gravity="left"
+        android:orientation="horizontal">
+
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/dateBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
             android:text="Month"
-            android:textColor="@color/colorWhite"
-            android:background="@color/colorPrimary"/>
+            android:textColor="@color/colorWhite" />
+
         <TextView
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-        </TextView>
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Monthly Report"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            />
+
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/yearBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Year Report"
-            android:textColor="@color/colorWhite"
+            android:background="@color/colorPrimary"
             android:padding="6dp"
-            android:background="@color/colorPrimary"/>
+            android:text="Year Report"
+            android:textColor="@color/colorWhite" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="3"
         android:orientation="vertical">
-
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/piechart"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:fillViewport="false">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.4"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         >
 
@@ -318,7 +329,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp">
         </TextView>
-    </LinearLayout>
+    </LinearLayout></ScrollView>
 </LinearLayout>
 
             <com.github.clans.fab.FloatingActionMenu
@@ -327,7 +338,7 @@
                 android:layout_height="wrap_content"
                 app:menu_colorNormal="@color/colorPrimary"
                 app:menu_colorPressed="@color/colorPrimaryDark"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:ignore="MissingConstraints">
                 <com.github.clans.fab.FloatingActionButton

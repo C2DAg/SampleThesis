@@ -74,6 +74,8 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
     RadioButton neededBtn;
     RadioButton wantedBtn;
     Date date = new Date();
+    Date startDate = new Date();
+    Date endDate = new Date();
     Date date1 = new Date();
     Date date2 = new Date();
     DatePickerDialog datePickerDialog;
@@ -96,6 +98,10 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         Log.w("dailyrecordwithitem", "rwi" + dailyRecordWithItem);
         Calendar calendar = Calendar.getInstance();
         date = calendar.getTime();
+        calendar.set(calendar.HOUR_OF_DAY,0);
+        startDate = calendar.getTime();
+        calendar.set(calendar.HOUR_OF_DAY,24);
+        endDate = calendar.getTime();
         dateBtn=findViewById(R.id.dateBtn);
         dateBtn.setText(dateFormat.format("dd-MM-yyy",date));
         toolbar = (Toolbar) findViewById(R.id.inputToolbar);
@@ -162,6 +168,10 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
             daysOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
             Log.w("getActualMaximum", "getActualMaximum" + daysOfMonth);
             calendar.set(Calendar.DAY_OF_MONTH, daysOfMonth);
+            calendar.set(Calendar.HOUR_OF_DAY,0);
+            startDate=calendar.getTime();
+            calendar.set(Calendar.HOUR_OF_DAY,24);
+            endDate=calendar.getTime();
             date2 = calendar.getTime();
             calendar.set(Calendar.DAY_OF_MONTH, 1);
             date1 = calendar.getTime();
@@ -249,7 +259,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 }
             } else if (dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("needed")) {
                 neededBtn.setChecked(true);
-                dayNeededEx=dailyRecordDAO.getDayNWTotal(date,"needed");
+                dayNeededEx=dailyRecordDAO.getDayNWTotal(startDate,endDate,"needed");
                 if (totalNeededEx > (totalIncome * neededLevel)) {
                     warninglyt.setVisibility(View.VISIBLE);
                     ((TextView) findViewById(R.id.warningInputTV)).setText("This Month Total Needed Expense exceeds " + (neededLevel * 100) + "% of Income!");
@@ -267,7 +277,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 }
             } else if (dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("wanted")) {
                 wantedBtn.setChecked(true);
-                dayWantedEX=dailyRecordDAO.getDayNWTotal(date,"wanted");
+                dayWantedEX=dailyRecordDAO.getDayNWTotal( startDate,endDate,"wanted");
                 if (totalWantedEX >= (totalIncome * wantedLevel)) {
                     findViewById(R.id.warningLayout).setVisibility(View.VISIBLE);
                     ((TextView) findViewById(R.id.warningInputTV)).setText("This Month Total Wanted Expense exceeds " + (wantedLevel * 100) + "% of Income!");
@@ -436,16 +446,16 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                     totalIncome = database.getDailyRecordDAO().getIETotal(date1, date2, "Income");
                                     totalNeededEx = database.getDailyRecordDAO().getNWTotal(date1, date2, "needed");
                                     totalWantedEX = database.getDailyRecordDAO().getNWTotal(date1, date2, "wanted");
-                                    dayNeededEx = database.getDailyRecordDAO().getDayNWTotal(date, "needed");
-                                    dayWantedEX = database.getDailyRecordDAO().getDayNWTotal(date, "wanted");
+                                    dayNeededEx = database.getDailyRecordDAO().getDayNWTotal(startDate,endDate, "needed");
+                                    dayWantedEX = database.getDailyRecordDAO().getDayNWTotal(startDate,endDate, "wanted");
                                 }else if((dailyRecordWithItem == null)){
                                     totalSaving = database.getDailyRecordDAO().getSTotal(date1, date, "Saving");
                                     totalWithdraw = database.getDailyRecordDAO().getWithdrawTotal(date1, date, "Withdraw");
                                     totalIncome = database.getDailyRecordDAO().getIETotal(date1, date, "Income");
                                     totalNeededEx = database.getDailyRecordDAO().getNWTotal(date1, date, "needed");
                                     totalWantedEX = database.getDailyRecordDAO().getNWTotal(date1, date, "wanted");
-                                    dayNeededEx = database.getDailyRecordDAO().getDayNWTotal(date, "needed");
-                                    dayWantedEX = database.getDailyRecordDAO().getDayNWTotal(date, "wanted");
+                                    dayNeededEx = database.getDailyRecordDAO().getDayNWTotal(startDate,endDate, "needed");
+                                    dayWantedEX = database.getDailyRecordDAO().getDayNWTotal(startDate,endDate, "wanted");
                                 }
                                     if (catType.equalsIgnoreCase("Saving") && !dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
                                         if (totalSaving == (totalIncome * savingLevel)-totalWithdraw) {
@@ -560,9 +570,9 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 monthRecord = dailyRecordDAO.getMonthRecord(date1, date2, itemId);
                 totalIncome = dailyRecordDAO.getIETotal(date1, date2, "Income");
                 totalNeededEx = dailyRecordDAO.getNWTotal(date1, date2, "needed");
-                dayNeededEx = dailyRecordDAO.getDayNWTotal(date,"needed");
+                dayNeededEx = dailyRecordDAO.getDayNWTotal(startDate,endDate,"needed");
                 totalWantedEX = dailyRecordDAO.getNWTotal(date1, date2, "wanted");
-                dayWantedEX = dailyRecordDAO.getDayNWTotal(date,"wanted");
+                dayWantedEX = dailyRecordDAO.getDayNWTotal(startDate,endDate,"wanted");
                 totalSaving = dailyRecordDAO.getSTotal(date1, date2,"Saving");
                 totalItemSaving=dailyRecordDAO.getSavingItemTotal(itemId,"Saving");
                 lastItemWithdraw=dailyRecordDAO.getLastItemWithdraw(itemId,"Withdraw");
@@ -909,6 +919,10 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         //        YearMonth yearMonth=YearMonth.of(year,month);
         date = calendar.getTime();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        startDate = calendar.getTime();
+        calendar.set(Calendar.HOUR_OF_DAY, 24);
+        endDate = calendar.getTime();
         int daysOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         Log.w("getActualMaximum", "getActualMaximum" + daysOfMonth);
         calendar.set(Calendar.DAY_OF_MONTH, daysOfMonth);
@@ -981,7 +995,10 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
         inputExpenseAdapter.notifyDataSetChanged();
         Calendar calendar = Calendar.getInstance();
         date=calendar.getTime();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        startDate = calendar.getTime();
+        calendar.set(Calendar.HOUR_OF_DAY, 24);
+        endDate = calendar.getTime();
         dateBtn.setText(dateFormat.format("dd-MM-yyy",date));
     }
-
 }

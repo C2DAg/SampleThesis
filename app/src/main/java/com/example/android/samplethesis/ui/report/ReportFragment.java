@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.arch.lifecycle.ViewModelProviders;
+import android.widget.Toast;
 
 import com.example.android.samplethesis.AppDatabase;
 import com.example.android.samplethesis.InputActivity;
@@ -39,6 +40,7 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
     private ReportViewModel reportViewModel;
     Date date = new Date();
     Date date1, date2;
+    PieChart pieChart;
     int wantedTotal, neededTotal, incomeTotal, expenseTotal, savingTotal, withdrawTotal,balance;
     FloatingActionMenu floatingActionMenu ;
     TextView nTV, wTV, iTV, eTV, bTV, sTV,wdTV;
@@ -58,7 +60,7 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
         today.set(Calendar.DAY_OF_MONTH, 1);
         date1 = today.getTime();
         Log.e("oncreateview", "date1,date2" + date1 + "and " + date2);
-        PieChart pieChart = root.findViewById(R.id.piechart);
+        pieChart = root.findViewById(R.id.piechart);
         nTV = root.findViewById(R.id.neededDTV);
         wTV = root.findViewById(R.id.wantedDTV);
         iTV = root.findViewById(R.id.incomeDTV);
@@ -112,19 +114,24 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
         bTV.setText(String.valueOf((incomeTotal - (expenseTotal+savingTotal-withdrawTotal))));
         wdTV.setText(String.valueOf(withdrawTotal));
 
-        float[] totals = {neededTotal,wantedTotal,savingTotal-withdrawTotal,withdrawTotal,balance};
-        String[] names = {"Needed Expense","Wanted Expense","Saving","Withdraw Saving","Balance"};
         int[] colors = {Color.rgb(152,106,255),Color.rgb(182,2,243),Color.rgb(6,158,207),
                 Color.rgb(255,153,10),Color.rgb(84,2,231)};
         ArrayList calculatedValues = new ArrayList();
 
-
-
-        calculatedValues.add(new Entry((float)(neededTotal*100/incomeTotal), 0));
-        calculatedValues.add(new Entry((float)(wantedTotal*100/incomeTotal), 1));
-        calculatedValues.add(new Entry((float)((savingTotal-withdrawTotal)*100/incomeTotal), 2));
-        calculatedValues.add(new Entry((float)(withdrawTotal*100/incomeTotal), 3));
-        calculatedValues.add(new Entry((float)(balance*100/incomeTotal), 4));
+        if(incomeTotal <= 0){
+            calculatedValues.add(new Entry(0, 0));
+            calculatedValues.add(new Entry(0, 1));
+            calculatedValues.add(new Entry(0, 2));
+            calculatedValues.add(new Entry(0, 3));
+            calculatedValues.add(new Entry(0, 4));
+            Toast.makeText( getActivity(), "No income in this month" , Toast.LENGTH_SHORT).show();
+        }else {
+            calculatedValues.add(new Entry((float) (neededTotal * 100 / incomeTotal), 0));
+            calculatedValues.add(new Entry((float) (wantedTotal * 100 / incomeTotal), 1));
+            calculatedValues.add(new Entry((float) ((savingTotal - withdrawTotal) * 100 / incomeTotal), 2));
+            calculatedValues.add(new Entry((float) (withdrawTotal * 100 / incomeTotal), 3));
+            calculatedValues.add(new Entry((float) (balance * 100 / incomeTotal), 4));
+        }
 
         PieDataSet dataSet = new PieDataSet(calculatedValues, "Expense & Balance percentages based on Income ");
 
@@ -186,27 +193,61 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
         calendar.set(Calendar.YEAR, selectedYear);
         calendar.set(Calendar.MONTH, selectedMonth);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
-        date = calendar.getTime();
+        date1 = calendar.getTime();
         int daysOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         Log.w("getActualMaximum", "getActualMaximum" + daysOfMonth);
         calendar.set(Calendar.DAY_OF_MONTH, daysOfMonth);
         date2 = calendar.getTime();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        date1 = calendar.getTime();
         Log.w("dates123", "" + date + "_MonthBeginAt" + date1 + "EndIn" + date2);
-        DailyRecordDAO dailyrecordDAO = database.getDailyRecordDAO();
-        wantedTotal = dailyrecordDAO.getNWTotal(date1, date2, "wanted");
-        neededTotal = dailyrecordDAO.getNWTotal(date1, date2, "needed");
-        incomeTotal = dailyrecordDAO.getIETotal(date1, date2, "Income");
-        expenseTotal = dailyrecordDAO.getIETotal(date1, date2, "Expense");
-        savingTotal = dailyrecordDAO.getSTotal(date1, date2, "Saving");
+        DailyRecordDAO dailyRecordDAO = database.getDailyRecordDAO();
+        wantedTotal = dailyRecordDAO.getNWTotal(date1, date2, "wanted");
+        neededTotal = dailyRecordDAO.getNWTotal(date1, date2, "needed");
+        incomeTotal = dailyRecordDAO.getIETotal(date1, date2, "Income");
+        expenseTotal = dailyRecordDAO.getIETotal(date1, date2, "Expense");
+        savingTotal = dailyRecordDAO.getSTotal(date1, date2, "Saving");
+        withdrawTotal = dailyRecordDAO.getWithdrawTotal(date1,date2, "Withdraw");
+        balance = incomeTotal-(expenseTotal+savingTotal-withdrawTotal);
 
         nTV.setText(String.valueOf(neededTotal));
         wTV.setText(String.valueOf(wantedTotal));
         iTV.setText(String.valueOf(incomeTotal));
         eTV.setText(String.valueOf(expenseTotal));
-        sTV.setText(String.valueOf(savingTotal));
-        bTV.setText(String.valueOf((incomeTotal - expenseTotal)-savingTotal));
+        sTV.setText(String.valueOf(savingTotal-withdrawTotal));
+        bTV.setText(String.valueOf((incomeTotal - (expenseTotal+savingTotal-withdrawTotal))));
+        wdTV.setText(String.valueOf(withdrawTotal));
+
+        int[] colors = {Color.rgb(152,106,255),Color.rgb(182,2,243),Color.rgb(6,158,207),
+                Color.rgb(255,153,10),Color.rgb(84,2,231)};
+        ArrayList calculatedValues = new ArrayList();
+        if(incomeTotal <= 0){
+            calculatedValues.add(new Entry(0, 0));
+            calculatedValues.add(new Entry(0, 1));
+            calculatedValues.add(new Entry(0, 2));
+            calculatedValues.add(new Entry(0, 3));
+            calculatedValues.add(new Entry(0, 4));
+            Toast.makeText( getActivity(), "No data in this month" , Toast.LENGTH_SHORT).show();
+        }else {
+            calculatedValues.add(new Entry((float) (neededTotal * 100 / incomeTotal), 0));
+            calculatedValues.add(new Entry((float) (wantedTotal * 100 / incomeTotal), 1));
+            calculatedValues.add(new Entry((float) ((savingTotal - withdrawTotal) * 100 / incomeTotal), 2));
+            calculatedValues.add(new Entry((float) (withdrawTotal * 100 / incomeTotal), 3));
+            calculatedValues.add(new Entry((float) (balance * 100 / incomeTotal), 4));
+        }
+        PieDataSet dataSet = new PieDataSet(calculatedValues, "Expense & Balance percentages based on Income ");
+
+        ArrayList financeType = new ArrayList();
+
+        financeType.add("Needed Expense");
+        financeType.add("Wanted Expense");
+        financeType.add("Saving");
+        financeType.add("Withdraw Saving");
+        financeType.add("Balance");
+
+        PieData data = new PieData(financeType, dataSet);
+        pieChart.setData(data);
+        dataSet.setColors(colors);
+        pieChart.animateXY(1000, 1000);
+
 
         Log.e("HERE", wantedTotal + "");
         Log.e("HERE", wantedTotal + "");
@@ -218,21 +259,23 @@ public class ReportFragment extends Fragment implements MonthPickerDialog.OnDate
     @Override
     public void onResume() {
         super.onResume();
-        DailyRecordDAO dailyrecordDAO = database.getDailyRecordDAO();
+        DailyRecordDAO dailyRecordDAO = database.getDailyRecordDAO();
         floatingActionMenu.close(true);
-        wantedTotal = dailyrecordDAO.getNWTotal(date1, date2, "wanted");
-        neededTotal = dailyrecordDAO.getNWTotal(date1, date2, "needed");
-        incomeTotal = dailyrecordDAO.getIETotal(date1, date2, "Income");
-        expenseTotal = dailyrecordDAO.getIETotal(date1, date2, "Expense");
-        savingTotal = dailyrecordDAO.getSTotal(date1, date2, "Saving");
-        withdrawTotal = dailyrecordDAO.getWithdrawTotal(date1,date2, "Withdraw");
+        wantedTotal = dailyRecordDAO.getNWTotal(date1, date2, "wanted");
+        neededTotal = dailyRecordDAO.getNWTotal(date1, date2, "needed");
+        incomeTotal = dailyRecordDAO.getIETotal(date1, date2, "Income");
+        expenseTotal = dailyRecordDAO.getIETotal(date1, date2, "Expense");
+        savingTotal = dailyRecordDAO.getSTotal(date1, date2, "Saving");
+        withdrawTotal = dailyRecordDAO.getWithdrawTotal(date1,date2, "Withdraw");
         balance = incomeTotal-(expenseTotal+savingTotal-withdrawTotal);
+
         nTV.setText(String.valueOf(neededTotal));
         wTV.setText(String.valueOf(wantedTotal));
         iTV.setText(String.valueOf(incomeTotal));
         eTV.setText(String.valueOf(expenseTotal));
-        sTV.setText(String.valueOf(savingTotal));
-        bTV.setText(String.valueOf((incomeTotal - expenseTotal)-savingTotal));
+        sTV.setText(String.valueOf(savingTotal-withdrawTotal));
+        bTV.setText(String.valueOf((incomeTotal - (expenseTotal+savingTotal-withdrawTotal))));
+        wdTV.setText(String.valueOf(withdrawTotal));
 
     }
 
