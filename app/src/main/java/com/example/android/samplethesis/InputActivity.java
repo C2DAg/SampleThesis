@@ -1,11 +1,16 @@
 package com.example.android.samplethesis;
 
 import android.app.DatePickerDialog;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,6 +38,8 @@ import com.example.android.samplethesis.model.Item;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+
 public class InputActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     AppDatabase database;
     List<Item> itemList;
@@ -210,7 +217,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
             Log.e("total item saving:", "" + totalItemSaving);
 //Warning linear layout
             if (catType.equalsIgnoreCase("Saving") && !dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
-                if (totalSaving == (totalIncome * savingLevel)) {
+                if (totalSaving == (totalIncome * savingLevel)-totalWithdraw) {
                     warninglyt.setVisibility(View.VISIBLE);
                     ((TextView) findViewById(R.id.warningInputTV)).setText("Your Saving amount is at " + (100 * savingLevel) + "% of Income.");
                     ((TextView) findViewById(R.id.warningInputTV)).setTextColor(Color.parseColor("#E9EC28"));
@@ -336,9 +343,9 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                             database.getDailyRecordDAO().update(dailyRecord);
                                             userInput.setText("");
                                             itemNameTV.setText("");
+
                                             Toast.makeText(InputActivity.this, "Your Record is saved.", Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(InputActivity.this, MenuDrawerActivity.class);
-                                            startActivity(intent);
+
                                         }
                                     }else if (catType.equalsIgnoreCase("Saving") &&
                                             dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
@@ -356,8 +363,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                             userInput.setText("");
                                             itemNameTV.setText("");
                                             Toast.makeText(InputActivity.this, "Your Record is saved.", Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(InputActivity.this, MenuDrawerActivity.class);
-                                            startActivity(intent);
+
                                         }
                                     } else {
                                         dailyRecord = dailyRecordWithItem.getDailyRecord();
@@ -368,8 +374,6 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                         userInput.setText("");
                                         itemNameTV.setText("");
                                         Toast.makeText(InputActivity.this, "Your Record is saved.", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(InputActivity.this, MenuDrawerActivity.class);
-                                        startActivity(intent);
                                     }
                                 } else if (dailyRecordWithItem == null) { // new record input
                                     int inval = database.getDailyRecordDAO().getIETotal(date1, date, "Income");
@@ -408,6 +412,102 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                     }
                                     inputExpenseView.setVisibility(View.GONE);
                                 }
+                                //Notification generate
+                                if (dailyRecordWithItem != null) {
+                                    totalSaving = database.getDailyRecordDAO().getSTotal(date1, date2, "Saving");
+                                    totalWithdraw = database.getDailyRecordDAO().getWithdrawTotal(date1, date2, "Withdraw");
+                                    totalIncome = database.getDailyRecordDAO().getIETotal(date1, date2, "Income");
+                                    totalNeededEx = database.getDailyRecordDAO().getNWTotal(date1, date2, "needed");
+                                    totalWantedEX = database.getDailyRecordDAO().getNWTotal(date1, date2, "wanted");
+                                    dayNeededEx = database.getDailyRecordDAO().getDayNWTotal(date, "needed");
+                                    dayWantedEX = database.getDailyRecordDAO().getDayNWTotal(date, "wanted");
+                                }else if((dailyRecordWithItem == null)){
+                                    totalSaving = database.getDailyRecordDAO().getSTotal(date1, date, "Saving");
+                                    totalWithdraw = database.getDailyRecordDAO().getWithdrawTotal(date1, date, "Withdraw");
+                                    totalIncome = database.getDailyRecordDAO().getIETotal(date1, date, "Income");
+                                    totalNeededEx = database.getDailyRecordDAO().getNWTotal(date1, date, "needed");
+                                    totalWantedEX = database.getDailyRecordDAO().getNWTotal(date1, date, "wanted");
+                                    dayNeededEx = database.getDailyRecordDAO().getDayNWTotal(date, "needed");
+                                    dayWantedEX = database.getDailyRecordDAO().getDayNWTotal(date, "wanted");
+                                }
+                                    if (catType.equalsIgnoreCase("Saving") && !dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
+                                        if (totalSaving == (totalIncome * savingLevel)-totalWithdraw) {
+                                            String message = "Your Saving amount is at " + (100 * savingLevel) + "% of Income.";
+                                            Log.e("message notification"," =" + message);
+                                            String title ="Congratulation";
+                                            sendNotification(message,title);
+                                        } else if (totalSaving > (totalIncome * savingLevel)-totalWithdraw) {
+                                            String message = "Your Saving amount exceeds " + (100 * savingLevel) + "% of Income.";
+                                            Log.e("message notification"," =" + message);
+                                            String title ="Congratulation";
+                                            sendNotification(message,title);
+                                        }
+                                    } else if (catType.equalsIgnoreCase("Income")) {
+                                        if (totalIncome == (totalNeededEx + totalWantedEX + totalSaving - totalWithdraw)) {
+                                            String message = "This month income had been used";
+                                            Log.e("message notification"," =" + message);
+                                            String title ="Income Warning";
+                                            sendNotification(message,title);
+                                        } else if (totalIncome < (totalNeededEx + totalWantedEX + totalSaving - totalWithdraw)) {
+                                            String message = "This month expense had exceeded the total income.";
+                                            Log.e("message notification"," =" + message);
+                                            String title ="INCOME WARNING";
+                                            sendNotification(message,title);
+
+                                        } else if (totalIncome <= (totalNeededEx + totalWantedEX + totalSaving - totalWithdraw + 30000)) {
+                                            String message = "You has low income";
+                                            Log.e("message notification"," =" + message);
+                                            String title ="INCOME WARNING";
+                                            sendNotification(message,title);
+                                        }
+                                    } else if (dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("needed")) {
+                                        if (totalNeededEx > (totalIncome * neededLevel)) {
+                                            String message = "This Month Total Needed Expense exceeds " + (neededLevel * 100) + "% of Income!";
+                                            Log.e("message notification"," =" + message);
+                                            String title ="Needed Type Expense WARNING";
+                                            sendNotification(message,title);
+                                        } else if (totalNeededEx == (totalIncome * neededLevel)) {
+                                            String message ="This Month Total Needed Expense is at " + (neededLevel * 100) + "% of Income!";
+                                            Log.e("message notification"," =" + message);
+                                            String title ="Needed Type Expense WARNING";
+                                            sendNotification(message,title);
+                                        } else if (dayNeededEx > (totalIncome * neededLevel / daysOfMonth)) {
+                                            String message ="Your Today Needed Expense exceeds " + (neededLevel * 100) + "% of Income!";
+                                            Log.e("message notification"," =" + message);
+                                            String title ="Needed Type Expense WARNING";
+                                            sendNotification(message,title);
+                                        } else if (dayNeededEx == (totalIncome * neededLevel / daysOfMonth)) {
+                                            String message = "Your Today Needed Expense is at " + (neededLevel * 100) + "% of Income!";
+                                            Log.e("message notification"," =" + message);
+                                            String title ="Needed Type Expense WARNING";
+                                            sendNotification(message,title);
+                                        }
+                                    } else if (dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("wanted")) {
+                                        if (totalWantedEX >= (totalIncome * wantedLevel)) {
+                                            String message = "This Month Total Wanted Expense exceeds " + (wantedLevel * 100) + "% of Income!" ;
+                                            Log.e("message notification"," =" + message);
+                                            String title ="Wanted Type Expense WARNING";
+                                            sendNotification(message,title);
+                                        } else if (totalWantedEX == (totalIncome * wantedLevel)) {
+                                            String message = "This Month Total Wanted Expense is at " + (wantedLevel * 100) + "% of Income!";
+                                            Log.e("message notification"," =" + message);
+                                            String title ="Wanted Type Expense WARNING";
+                                            sendNotification(message,title);
+                                        } else if (dayWantedEX >= (totalIncome * wantedLevel / daysOfMonth)) {
+                                            String message ="Your Today Wanted Expense exceeds " + (wantedLevel * 100) + "% of Income!";
+                                            Log.e("message notification"," =" + message);
+                                            String title ="Wanted Type Expense WARNING";
+                                            sendNotification(message,title);
+                                        } else if (dayWantedEX == (totalIncome * wantedLevel / daysOfMonth)) {
+                                            String message ="Your Today Wanted Expense is at " + (wantedLevel * 100) + "% of Income!";
+                                            Log.e("message notification"," =" + message);
+                                            String title ="Wanted Type Expense WARNING";
+                                            sendNotification(message,title);
+                                        }
+                                }
+                                if (dailyRecordWithItem != null) {
+                                    Intent intent = new Intent(InputActivity.this, MenuDrawerActivity.class);
+                                    startActivity(intent); }
                             }
                             break;
                         case R.id.btnDel:
@@ -457,6 +557,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 Log.e("lastMonthNex", "" + totalNeededEx);
                 Log.e("lastMonthWex", "" + totalWantedEX);
                 Log.e("lastMonthincome", "" + totalIncome);
+                //warning layout
                 if (type.equalsIgnoreCase("Saving")) {
                     Log.w("total Saving ", "" + totalSaving);
                     if (totalSaving == (totalIncome * savingLevel)) {
@@ -819,6 +920,31 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
             return super.onOptionsItemSelected(item);
     }
 
+    private void sendNotification(String message,String title) {
+
+        Intent intent = new Intent(this, MenuDrawerActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        final int not_nu=generateRandom();
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, not_nu /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_ycc_logo)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(not_nu /* ID of notification */, notificationBuilder.build());
+    }
+
+    public int generateRandom(){
+        Random random = new Random();
+        return random.nextInt(9999 - 1000) + 1000;
+    }
 
     @Override
     public void onResume() {
