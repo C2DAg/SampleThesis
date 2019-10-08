@@ -488,7 +488,8 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                             Log.e("message notification"," =" + message);
                                             String title ="Needed Type Expense WARNING";
                                             sendNotification(message,title);
-                                        } else if (dayNeededEx > (totalIncome * neededLevel / daysOfMonth)) {
+                                        }
+                                        if (dayNeededEx > (totalIncome * neededLevel / daysOfMonth)) {
                                             String message ="Your Today Needed Expense exceeds " + (neededLevel * 100) + "% of Income!";
                                             Log.e("message notification"," =" + message);
                                             String title ="Needed Type Expense WARNING";
@@ -509,7 +510,8 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                             Log.e("message notification"," =" + message);
                                             String title ="Wanted Type Expense WARNING";
                                             sendNotification(message,title);
-                                        } else if (dayWantedEX >= (totalIncome * wantedLevel / daysOfMonth)) {
+                                        }
+                                        if (dayWantedEX >= (totalIncome * wantedLevel / daysOfMonth)) {
                                             String message ="Your Today Wanted Expense exceeds " + (wantedLevel * 100) + "% of Income!";
                                             Log.e("message notification"," =" + message);
                                             String title ="Wanted Type Expense WARNING";
