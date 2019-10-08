@@ -83,9 +83,9 @@ public class RecordHistoryAdapter extends RecyclerView.Adapter<RecordHistoryAdap
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
         viewHolder.dateTV.setText(dateFormat.format(" dd-MM-yyy ", records.get(i).getDailyRecord().getDate()));
         viewHolder.itemTV.setText(String.valueOf(records.get(i).getItem().getName()));
-        viewHolder.catTV.setText(records.get(i).getItem().getCategory());
-        viewHolder.valueTV.setText(records.get(i).getDailyRecord().getValue()+"");
-        viewHolder.memoTV.setText(records.get(i).getDailyRecord().getMemo()+"");
+        viewHolder.catTV.setText(String.valueOf(records.get(i).getDailyRecord().getFinanceType()));
+        viewHolder.valueTV.setText(String.valueOf(records.get(i).getDailyRecord().getValue()));
+        viewHolder.memoTV.setText(String.valueOf(records.get(i).getDailyRecord().getMemo()));
         viewHolder.left_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -128,7 +128,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 this, InputActivity.this,
                 calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
-
+        inputExpenseAdapter = new InputExpenseAdapter(itemList);
         if (dailyRecordWithItem == null) {  // For new record input
             if(type.equalsIgnoreCase("Withdraw")){
                 catType="Saving";
@@ -137,7 +137,6 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
             }
             itemList = database.getItemDAO().getItemByCat(catType);
             RecyclerView recyclerView = findViewById(R.id.inputExpenseRecyclerView);
-            inputExpenseAdapter = new InputExpenseAdapter(itemList);
             recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
             recyclerView.setAdapter(inputExpenseAdapter);
              if (type.equalsIgnoreCase("Income") || type.equalsIgnoreCase("Saving")) {
@@ -166,47 +165,50 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
             date2 = calendar.getTime();
             calendar.set(Calendar.DAY_OF_MONTH, 1);
             date1 = calendar.getTime();
+            imgV.setImageResource(dailyRecordWithItem.getItem().getIcon());
+            userInput = findViewById(R.id.editNumPad);
+            userInput.setText(dailyRecordWithItem.getDailyRecord().getValue() + "");
             catType = String.valueOf(dailyRecordWithItem.getItem().getCategory());
+            monthRecord = dailyRecordDAO.getMonthRecord(date1, date2, itemId);
+            totalIncome = dailyRecordDAO.getIETotal(date1, date2, "Income");
+            totalWithdraw = dailyRecordDAO.getWithdrawTotal(date1,date2,"Withdraw");
+            totalNeededEx = dailyRecordDAO.getNWTotal(date1, date2, "needed");
+            totalWantedEX = dailyRecordDAO.getNWTotal(date1, date2, "wanted");
+            totalSaving = dailyRecordDAO.getSTotal(date1, date2, "Saving");
+            lastRecordValue = dailyRecordDAO.getLastRecord(itemId);
+            totalItemSaving = dailyRecordDAO.getSavingItemTotal(itemId, "Saving");
+            lastItemWithdraw = dailyRecordDAO.getLastItemWithdraw(itemId, "Withdraw");
             if(dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")){
                 type = "Withdraw";
-            }else {type.equalsIgnoreCase(catType);}
+            }else {type=catType;}
             memo = String.valueOf(dailyRecordWithItem.getDailyRecord().getMemo());
 
             if (catType.equalsIgnoreCase("Income") || catType.equalsIgnoreCase("Saving")) {
                 Toast.makeText(InputActivity.this, "" + dailyRecordWithItem.getItem().getCategory(), Toast.LENGTH_SHORT).show();
                 ((TextView) findViewById(R.id.thisMonthPurchase)).setText("This Month Record:");
                 ((TextView) findViewById(R.id.lastPurchase)).setText("Last record of Item:");
-                findViewById(R.id.financeType).setVisibility(View.GONE);
-                totalSaving = dailyRecordDAO.getSTotal(date1, date2, "Saving");
-
-            } else if (dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
+                ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + monthRecord);
+                ((TextView) findViewById(R.id.lastPurchaseDText)).setText("" + lastRecordValue);
+            } else if (type.equalsIgnoreCase("Withdraw")) {
                 Toast.makeText(InputActivity.this, "" + dailyRecordWithItem.getDailyRecord().getFinanceType(), Toast.LENGTH_SHORT).show();
                 ((TextView) findViewById(R.id.thisMonthPurchase)).setText("Total Saving in Item:");
                 ((TextView) findViewById(R.id.lastPurchase)).setText("Last record of Item:");
                 findViewById(R.id.financeType).setVisibility(View.GONE);
-                totalItemSaving = dailyRecordDAO.getSavingItemTotal(itemId, "Saving");
-                Log.w("total item saving", "" + totalItemSaving);
-            } else {
-                totalNeededEx = dailyRecordDAO.getNWTotal(date1, date2, "needed");
-                totalWantedEX = dailyRecordDAO.getNWTotal(date1, date2, "wanted");
-                Toast.makeText(InputActivity.this, "" + catType, Toast.LENGTH_SHORT).show();
-            }
-
-            monthRecord = dailyRecordDAO.getMonthRecord(date1, date2, itemId);
-            totalIncome = dailyRecordDAO.getIETotal(date1, date2, "Income");
-            totalWithdraw = dailyRecordDAO.getWithdrawTotal(date1,date2,"Withdraw");
-            imgV.setImageResource(dailyRecordWithItem.getItem().getIcon());
-            userInput = findViewById(R.id.editNumPad);
-            userInput.setText(dailyRecordWithItem.getDailyRecord().getValue() + "");
-
-            if (dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
-                lastItemWithdraw = dailyRecordDAO.getLastItemWithdraw(itemId, "Withdraw");
                 ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + totalItemSaving);
                 ((TextView) findViewById(R.id.lastPurchaseDText)).setText("" + lastItemWithdraw);
+                findViewById(R.id.financeType).setVisibility(View.GONE);
+                Log.w("total item saving", "" + totalItemSaving);
             } else {
-                lastRecordValue = dailyRecordDAO.getLastRecord(itemId);
-                ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + monthRecord);
-                ((TextView) findViewById(R.id.lastPurchaseDText)).setText("" + lastRecordValue);
+                if (dailyRecordWithItem.getItem().getDefaultType().equalsIgnoreCase("wanted")) {
+                    wantedBtn.setChecked(true);
+                    ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + totalWantedEX);
+                    ((TextView) findViewById(R.id.lastPurchaseDText)).setText("" + lastRecordValue);
+                }else if (dailyRecordWithItem.getItem().getDefaultType().equalsIgnoreCase("needed")) {
+                    wantedBtn.setChecked(true);
+                    ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + totalNeededEx);
+                    ((TextView) findViewById(R.id.lastPurchaseDText)).setText("" + lastRecordValue);
+                }
+                Toast.makeText(InputActivity.this, "" + catType, Toast.LENGTH_SHORT).show();
             }
 
             Log.w("lastRecord", "" + lastRecordValue);
@@ -326,14 +328,11 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                 Toast.makeText(InputActivity.this, "Invalid Value!! Pls Try again", Toast.LENGTH_SHORT).show();
                             } else {
                                 if (dailyRecordWithItem != null) { // Edit old record
-                                    int exval = database.getDailyRecordDAO().getIETotal(date1, date2, "Expense");
-                                    int saval = database.getDailyRecordDAO().getSTotal(date1, date2, "Saving");
-
                                     if (catType.equalsIgnoreCase("Saving")&& !dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
                                         Log.w("dailyrecordwithitem", "income" + totalIncome);
-                                        Log.w("dailyrecordwithitem", "expense" + exval);
-                                        Log.w("dailyrecordwithitem", "saving" + saval);
-                                        if (value > (totalIncome + totalWithdraw - (exval + saval))) {
+                                        Log.w("dailyrecordwithitem", "expense" + totalWantedEX + totalNeededEx );
+                                        Log.w("dailyrecordwithitem", "saving" + totalSaving);
+                                        if (value > (totalIncome + totalWithdraw - (totalWantedEX + totalNeededEx+totalSaving))) {
                                             Toast.makeText(InputActivity.this, "Insufficient Balance! Pls try again.", Toast.LENGTH_LONG).show();
                                         } else {
                                             dailyRecord = dailyRecordWithItem.getDailyRecord();
@@ -343,15 +342,12 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                             database.getDailyRecordDAO().update(dailyRecord);
                                             userInput.setText("");
                                             itemNameTV.setText("");
-
                                             Toast.makeText(InputActivity.this, "Your Record is saved.", Toast.LENGTH_SHORT).show();
-
                                         }
                                     }else if (catType.equalsIgnoreCase("Saving") &&
                                             dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("Withdraw")) {
-                                        int totalval = database.getDailyRecordDAO().getSavingItemTotal(itemId,"Saving");
-                                        Log.w("dailyrecordwithitem", "income" + totalval);
-                                        if (value > totalval) {
+                                        Log.w("dailyrecordwithitem", "saving in item" + totalItemSaving);
+                                        if (value > totalItemSaving) {
                                             Toast.makeText(InputActivity.this, "Insufficient Saving! Pls try again.", Toast.LENGTH_LONG).show();
                                         }else {
                                             financeType="Withdraw";
@@ -363,9 +359,18 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                             userInput.setText("");
                                             itemNameTV.setText("");
                                             Toast.makeText(InputActivity.this, "Your Record is saved.", Toast.LENGTH_SHORT).show();
-
                                         }
-                                    } else {
+                                    }else if(catType.equalsIgnoreCase("Income")){
+                                        financeType="Income";
+                                        dailyRecord = dailyRecordWithItem.getDailyRecord();
+                                        dailyRecord.setDate(date);
+                                        dailyRecord.setFinanceType(financeType);
+                                        dailyRecord.setValue(value);
+                                        database.getDailyRecordDAO().update(dailyRecord);
+                                        userInput.setText("");
+                                        itemNameTV.setText("");
+                                        Toast.makeText(InputActivity.this, "Your Record is saved.", Toast.LENGTH_SHORT).show();
+                                    }else {
                                         dailyRecord = dailyRecordWithItem.getDailyRecord();
                                         dailyRecord.setDate(date);
                                         dailyRecord.setFinanceType(financeType);
@@ -376,12 +381,16 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                         Toast.makeText(InputActivity.this, "Your Record is saved.", Toast.LENGTH_SHORT).show();
                                     }
                                 } else if (dailyRecordWithItem == null) { // new record input
-                                    int inval = database.getDailyRecordDAO().getIETotal(date1, date, "Income");
-                                    int exval = database.getDailyRecordDAO().getIETotal(date1, date, "Expense");
-                                    int saval = database.getDailyRecordDAO().getSTotal(date1, date, "Saving");
-                                    int wdval = database.getDailyRecordDAO().getWithdrawTotal(date1,date,"Withdraw");
+                                    totalIncome = dailyRecordDAO.getIETotal(date1, date2, "Income");
+                                    totalWithdraw = dailyRecordDAO.getWithdrawTotal(date1,date2,"Withdraw");
+                                    totalNeededEx = dailyRecordDAO.getNWTotal(date1, date2, "needed");
+                                    totalWantedEX = dailyRecordDAO.getNWTotal(date1, date2, "wanted");
+                                    totalSaving = dailyRecordDAO.getSTotal(date1, date2, "Saving");
+                                    lastRecordValue = dailyRecordDAO.getLastRecord(itemId);
+                                    totalItemSaving = dailyRecordDAO.getSavingItemTotal(itemId, "Saving");
+                                    lastItemWithdraw = dailyRecordDAO.getLastItemWithdraw(itemId, "Withdraw");
                                     if (type.equalsIgnoreCase("Saving")) {
-                                        if (value > (inval + wdval - (exval + saval))) {
+                                        if (value > (totalIncome + totalWithdraw - (totalNeededEx+totalWantedEX + totalSaving))) {
                                             Toast.makeText(InputActivity.this, "Insufficient Balance! Pls try again.", Toast.LENGTH_LONG).show();
                                         } else {
                                             financeType="Saving";
@@ -392,7 +401,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                             Toast.makeText(InputActivity.this, "Your Record is saved.", Toast.LENGTH_SHORT).show();
                                         }
                                     }else if (type.equalsIgnoreCase("Withdraw")) {
-                                        if (value > inval ) {
+                                        if (value > totalItemSaving ) {
                                             Toast.makeText(InputActivity.this, "Insufficient Saving! Pls try again.", Toast.LENGTH_LONG).show();
                                         } else {
                                             financeType ="Withdraw";
@@ -402,6 +411,14 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                             itemNameTV.setText("");
                                             Toast.makeText(InputActivity.this, "Your Record is saved.", Toast.LENGTH_SHORT).show();
                                         }
+                                    }else if (type.equalsIgnoreCase("Income")){
+                                        financeType="Income";
+                                        dailyRecord = new DailyRecord(itemId, date, value, financeType, memo);
+                                        Log.w("Insterting recrod", "new record" + dailyRecord.toString());
+                                        database.getDailyRecordDAO().insert(dailyRecord);
+                                        userInput.setText("");
+                                        itemNameTV.setText("");
+                                        Toast.makeText(InputActivity.this, "Your Record is saved.", Toast.LENGTH_SHORT).show();
                                     } else {
                                         dailyRecord = new DailyRecord(itemId, date, value, financeType, memo);
                                         Log.w("Insterting recrod", "new record" + dailyRecord.toString());
@@ -460,7 +477,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                             String title ="INCOME WARNING";
                                             sendNotification(message,title);
                                         }
-                                    } else if (dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("needed")) {
+                                    } else {
                                         if (totalNeededEx > (totalIncome * neededLevel)) {
                                             String message = "This Month Total Needed Expense exceeds " + (neededLevel * 100) + "% of Income!";
                                             Log.e("message notification"," =" + message);
@@ -482,7 +499,6 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                                             String title ="Needed Type Expense WARNING";
                                             sendNotification(message,title);
                                         }
-                                    } else if (dailyRecordWithItem.getDailyRecord().getFinanceType().equalsIgnoreCase("wanted")) {
                                         if (totalWantedEX >= (totalIncome * wantedLevel)) {
                                             String message = "This Month Total Wanted Expense exceeds " + (wantedLevel * 100) + "% of Income!" ;
                                             Log.e("message notification"," =" + message);
@@ -546,7 +562,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 totalWantedEX = dailyRecordDAO.getNWTotal(date1, date2, "wanted");
                 dayWantedEX = dailyRecordDAO.getDayNWTotal(date,"wanted");
                 totalSaving = dailyRecordDAO.getSTotal(date1, date2,"Saving");
-                totalItemSaving=dailyRecordDAO.getSavingItemTotal(itemId,"Income");
+                totalItemSaving=dailyRecordDAO.getSavingItemTotal(itemId,"Saving");
                 lastItemWithdraw=dailyRecordDAO.getLastItemWithdraw(itemId,"Withdraw");
                 lastRecordValue=dailyRecordDAO.getLastRecord(itemId);
                 dateBtn.setText(dateFormat.format("dd-MM-yyy ", date));
@@ -560,6 +576,8 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 //warning layout
                 if (type.equalsIgnoreCase("Saving")) {
                     Log.w("total Saving ", "" + totalSaving);
+                    ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + monthRecord);
+                    ((TextView) findViewById(R.id.lastPurchaseDText)).setText("" + lastRecordValue);
                     if (totalSaving == (totalIncome * savingLevel)) {
                         warninglyt.setVisibility(View.VISIBLE);
                         ((TextView) findViewById(R.id.warningInputTV)).setText("Your Saving amount is at " + (100 * savingLevel) + "% of Income.");
@@ -572,6 +590,9 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                         warninglyt.setVisibility(View.INVISIBLE);
                     }
                 } else if (type.equalsIgnoreCase("Income")) {
+                    financeType = "Income";
+                    ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + monthRecord);
+                    ((TextView) findViewById(R.id.lastPurchaseDText)).setText("" + lastRecordValue);
                     if (totalIncome ==(totalNeededEx+totalWantedEX+totalSaving-totalWithdraw)) {
                         warninglyt.setVisibility(View.VISIBLE);
                         ((TextView) findViewById(R.id.warningInputTV)).setText("This month income had been used");
@@ -585,6 +606,8 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                         warninglyt.setVisibility(View.INVISIBLE);
                     }
                 }else if (item.getDefaultType().equalsIgnoreCase("needed")) {
+                    ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + totalNeededEx);
+                    ((TextView) findViewById(R.id.lastPurchaseDText)).setText("" + lastRecordValue);
                     neededBtn.setChecked(true);
                     Log.w("total needed expense", "" + totalNeededEx);
                     if (totalNeededEx > (totalIncome * neededLevel)) {
@@ -606,7 +629,8 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
 
                 } else if (item.getDefaultType().equalsIgnoreCase("wanted")) {
                     wantedBtn.setChecked(true);
-
+                    ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + totalWantedEX);
+                    ((TextView) findViewById(R.id.lastPurchaseDText)).setText("" + lastRecordValue);
                     Log.w("total wanted expense", "" + totalWantedEX);
                     if (totalWantedEX > (totalIncome * wantedLevel)) {
                         warninglyt.setVisibility(View.VISIBLE);
@@ -623,6 +647,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                     } else {
                         warninglyt.setVisibility(View.INVISIBLE);
                     }
+                    double dWE = totalIncome * wantedLevel / daysOfMonth;
                 }else if(type.equalsIgnoreCase("Withdraw")){
                     lastItemWithdraw = dailyRecordDAO.getLastItemWithdraw(itemId,type);
                     ((TextView) findViewById(R.id.thisMonthPurchaseDText)).setText("" + totalItemSaving);
@@ -938,7 +963,7 @@ public class InputActivity extends AppCompatActivity implements DatePickerDialog
                 .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(not_nu /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(not_nu, notificationBuilder.build());
     }
 
     public int generateRandom(){

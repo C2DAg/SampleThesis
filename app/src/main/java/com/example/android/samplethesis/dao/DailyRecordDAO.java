@@ -37,6 +37,9 @@ public interface DailyRecordDAO {
     @Query("Select ifnull(value,0) from DailyRecord Where itemId = :itemId ORDER BY date DESC Limit 1" )
             public int getLastRecord(long itemId);
 
+    @Query("Select ifnull(value,0) from DailyRecord Where itemId = :itemId and financeType = :type ORDER BY date DESC Limit 1" )
+    public int getLastSWRecord(long itemId , String type);
+
     @Query("Select ifnull(sum(value),0) from DailyRecord Where itemId = :itemId and date Between :date1 and :date2 ")
         public int getMonthRecord(Date date1 , Date date2 , long itemId);
 
